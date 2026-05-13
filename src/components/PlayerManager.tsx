@@ -11,7 +11,7 @@ interface PlayerManagerProps {
   onAddPlayer: () => void;
   onRemovePlayer: (id: string) => void;
   onUpdatePlayerName: (id: string, name: string) => void;
-  onUpdatePlayerAge: (id: string, age: number) => void;
+  onTogglePlayerType: (id: string) => void;
   onSetExpandedPlayerId: (id: string | null) => void;
   gameConditions: { difficulty: Difficulty; mode: string };
 }
@@ -24,7 +24,7 @@ export const PlayerManager: React.FC<PlayerManagerProps> = ({
   onAddPlayer,
   onRemovePlayer,
   onUpdatePlayerName,
-  onUpdatePlayerAge,
+  onTogglePlayerType,
   onSetExpandedPlayerId,
   gameConditions,
 }) => {
@@ -50,7 +50,7 @@ export const PlayerManager: React.FC<PlayerManagerProps> = ({
         </div>
         <div className="flex-1">
           <h2 className="text-lg font-black text-gray-900 leading-none mb-1 uppercase tracking-tight">Người chơi</h2>
-          <p className="text-[13px] text-gray-400 font-bold">Nhấn vào tên để nhập tuổi (để tự điều chỉnh độ khó)</p>
+          <p className="text-[13px] text-gray-400 font-bold">Chọn loại người chơi (Trẻ em/Người lớn) để tự điều chỉnh độ khó</p>
         </div>
       </div>
 
@@ -86,15 +86,13 @@ export const PlayerManager: React.FC<PlayerManagerProps> = ({
               >
                 <div className="flex items-center p-3 gap-3 cursor-pointer" onClick={() => onSetExpandedPlayerId(isExpanded ? null : player.id)}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${getPlayerIcon(idx)}`}>
-                    <Smile size={16} />
+                    {player.isAdult === false ? '👶' : '👤'}
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-black text-gray-900">{player.name}</p>
-                    {player.age && (
-                      <p className="text-[10px] text-[#65A30D] font-black uppercase">
-                        {player.age} tuổi • {player.age >= 15 ? 'Người lớn' : 'Trẻ em'}
-                      </p>
-                    )}
+                    <p className={`text-[10px] font-black uppercase ${player.isAdult === false ? 'text-blue-500' : 'text-orange-500'}`}>
+                      {player.isAdult === false ? 'Trẻ em' : 'Người lớn'}
+                    </p>
                   </div>
                   <button 
                       onClick={(e) => { e.stopPropagation(); onRemovePlayer(player.id); }}
@@ -121,18 +119,18 @@ export const PlayerManager: React.FC<PlayerManagerProps> = ({
                             className="w-full bg-white border border-gray-100 rounded-lg px-3 py-2 text-xs font-bold outline-none focus:border-lime-200"
                           />
                         </div>
-                        <div>
-                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Tuổi (Không bắt buộc)</label>
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="number"
-                              placeholder="Vd: 25"
-                              value={player.age || ''}
-                              onChange={(e) => onUpdatePlayerAge(player.id, e.target.value ? Number(e.target.value) : 0)}
-                              className="flex-1 bg-white border border-gray-100 rounded-lg px-3 py-2 text-xs font-bold outline-none focus:border-lime-200"
-                            />
-                            <span className="text-[10px] font-black text-gray-400 uppercase">Tuổi</span>
-                          </div>
+                        <div className="flex items-center justify-between">
+                           <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Loại người chơi</span>
+                           <button
+                             onClick={() => onTogglePlayerType(player.id)}
+                             className={`px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${
+                               player.isAdult === false 
+                                 ? 'bg-blue-100 text-blue-600 ring-2 ring-blue-50' 
+                                 : 'bg-orange-100 text-orange-600 ring-2 ring-orange-50'
+                             }`}
+                           >
+                             {player.isAdult === false ? 'Trẻ em' : 'Người lớn'}
+                           </button>
                         </div>
                       </div>
                     </motion.div>
@@ -145,13 +143,18 @@ export const PlayerManager: React.FC<PlayerManagerProps> = ({
       </div>
 
       <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between">
-         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Độ khó hiện tại:</p>
-         <div className="px-3 py-1 bg-lime-100 rounded-full">
-            <span className="text-[10px] font-black text-[#65A30D] uppercase">
-              {gameConditions.difficulty === 'VERY_EASY' ? 'Dễ (Dành cho trẻ em)' : 
-               gameConditions.difficulty === 'EASY' ? 'Trung bình (Cả nhà cùng chơi)' : 
-               'Khó (Dành cho người lớn)'}
-            </span>
+         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Độ khó:</p>
+         <div className="text-right">
+            <p className="text-xs font-black text-[#65A30D] uppercase leading-none mb-1">
+              {gameConditions.difficulty === 'VERY_EASY' ? 'Dễ nhất' : 
+               gameConditions.difficulty === 'EASY' ? 'Trung bình' : 
+               'Khó'}
+            </p>
+            <p className="text-[10px] text-gray-400 font-bold leading-none">
+              {gameConditions.difficulty === 'VERY_EASY' ? '(Dành cho trẻ em)' : 
+               gameConditions.difficulty === 'EASY' ? '(Cả nhà cùng chơi)' : 
+               '(Dành cho người lớn)'}
+            </p>
          </div>
       </div>
     </section>

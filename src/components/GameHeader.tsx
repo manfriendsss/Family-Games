@@ -39,14 +39,6 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ stage, gameMode, onBack 
         <div className="w-10" />
       </div>
       
-      {stage === 'DASHBOARD' ? null : gameMode === 'CHARADES' ? (
-        <div className="text-center mt-2">
-          <h1 className="text-3xl font-black tracking-tight uppercase leading-none">
-            TÔI LÀ <span className="text-[#65A30D]">AI?</span>
-          </h1>
-          <p className="text-gray-500 font-bold mt-1">Cài đặt game Tôi là ai</p>
-        </div>
-      ) : null}
     </header>
   );
 };

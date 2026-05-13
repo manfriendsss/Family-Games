@@ -9,7 +9,7 @@ export type GameMode = 'DASHBOARD' | 'IMPOSTER' | 'CHARADES';
 export interface Player {
   id: string;
   name: string;
-  age?: number;
+  isAdult?: boolean;
   role?: Role;
   word?: string;
   isRevealed: boolean;

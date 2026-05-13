@@ -39,10 +39,10 @@ export const useGameState = () => {
 
   const getGameConditions = () => {
     const total = players.length;
-    const adults = players.filter(p => (p.age || 0) >= 15).length;
-    const children = players.filter(p => p.age && p.age < 15).length;
+    const adults = players.filter(p => p.isAdult !== false).length; // Default to adult if not specified
+    const children = players.filter(p => p.isAdult === false).length;
     
-    if (players.every(p => !p.age)) return { difficulty: 'EASY' as Difficulty, mode: 'NORMAL' };
+    if (players.every(p => p.isAdult === undefined)) return { difficulty: 'EASY' as Difficulty, mode: 'NORMAL' };
     if (children === total) return { difficulty: 'VERY_EASY' as Difficulty, mode: 'KIDS_ONLY' };
     if (adults === total) return { difficulty: 'HARD' as Difficulty, mode: 'ADULTS_ONLY' };
     if (children > 0 && adults > 0) return { difficulty: 'EASY' as Difficulty, mode: 'MIXED' };
@@ -53,7 +53,7 @@ export const useGameState = () => {
   const addPlayer = () => {
     if (!newPlayerName.trim()) return;
     const newId = String(Date.now());
-    setPlayers([...players, { id: newId, name: newPlayerName.trim(), isRevealed: false }]);
+    setPlayers([...players, { id: newId, name: newPlayerName.trim(), isRevealed: false, isAdult: true }]);
     setNewPlayerName('');
   };
 
@@ -66,8 +66,8 @@ export const useGameState = () => {
     setPlayers(players.map(p => p.id === id ? { ...p, name } : p));
   };
 
-  const updatePlayerAge = (id: string, age: number) => {
-    setPlayers(players.map(p => p.id === id ? { ...p, age } : p));
+  const togglePlayerType = (id: string) => {
+    setPlayers(players.map(p => p.id === id ? { ...p, isAdult: !p.isAdult } : p));
   };
 
   const toggleCategory = (id: string) => {
@@ -110,8 +110,8 @@ export const useGameState = () => {
     
     let imposterCandidates = [...newPlayers];
     if (mode === 'MIXED') {
-        const adults = newPlayers.filter(p => (p.age || 0) >= 15);
-        const kids = newPlayers.filter(p => p.age && p.age < 15);
+        const adults = newPlayers.filter(p => p.isAdult !== false);
+        const kids = newPlayers.filter(p => p.isAdult === false);
         const weightedPool: Player[] = [];
         adults.forEach(p => { for(let i=0; i<3; i++) weightedPool.push(p); });
         kids.forEach(p => weightedPool.push(p));
@@ -149,7 +149,7 @@ export const useGameState = () => {
     let order = [...newPlayers].sort(() => Math.random() - 0.5);
     const isInvalidFirstSpeaker = (p: typeof newPlayers[0]) => {
         if (p.role === 'IMPOSTER') return true;
-        if (mode === 'MIXED' && p.age && p.age < 15) return true;
+        if (mode === 'MIXED' && p.isAdult === false) return true;
         return false;
     };
 
@@ -248,7 +248,7 @@ export const useGameState = () => {
     addPlayer,
     removePlayer,
     updatePlayerName,
-    updatePlayerAge,
+    togglePlayerType,
     toggleCategory,
     toggleCharadesCategory,
     initiateGame,

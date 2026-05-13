@@ -40,7 +40,7 @@ export default function App() {
     addPlayer,
     removePlayer,
     updatePlayerName,
-    updatePlayerAge,
+    togglePlayerType,
     toggleCategory,
     toggleCharadesCategory,
     initiateGame,
@@ -77,7 +77,7 @@ export default function App() {
                   onAddPlayer={addPlayer}
                   onRemovePlayer={removePlayer}
                   onUpdatePlayerName={updatePlayerName}
-                  onUpdatePlayerAge={updatePlayerAge}
+                  onTogglePlayerType={togglePlayerType}
                   onSetExpandedPlayerId={setExpandedPlayerId}
                   gameConditions={getGameConditions()}
                 />
