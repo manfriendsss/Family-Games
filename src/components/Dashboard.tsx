@@ -10,6 +10,14 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ onGoToImposter, onGoToCharades }) => {
   return (
     <div className="space-y-4">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full bg-white rounded-[40px] p-2 shadow-sm border border-gray-100 overflow-hidden"
+      >
+        <img src="/familygame.webp" alt="Family Games" className="w-full h-48 object-cover rounded-[32px]" />
+      </motion.div>
+
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}

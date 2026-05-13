@@ -29,7 +29,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ stage, gameMode, onBack 
             className="w-full flex items-center justify-center"
           >
             <img 
-              src={gameMode === 'CHARADES' ? '/input_file_2.png' : '/input_file_1.png'} 
+              src={gameMode === 'CHARADES' ? '/toilaai.webp' : gameMode === 'IMPOSTER' ? '/ailanguoigiamao.webp' : '/familygame.webp'} 
               alt="Logo" 
               className={`w-full h-auto ${gameMode === 'CHARADES' ? 'scale-150' : 'drop-shadow-xl'}`}
               referrerPolicy="no-referrer"
