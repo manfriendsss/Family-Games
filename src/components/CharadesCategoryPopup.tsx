@@ -34,7 +34,7 @@ export const CharadesCategoryPopup: React.FC<CharadesCategoryPopupProps> = ({
             className="bg-white w-full max-w-md rounded-[32px] overflow-hidden shadow-2xl relative z-10"
           >
              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-                <h2 className="text-xl font-black text-gray-900 uppercase">Chọn chủ đề Charades</h2>
+                <h2 className="text-xl font-black text-gray-900 uppercase">Chọn chủ đề trò chơi</h2>
                 <button onClick={onClose} className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
                   <Plus size={20} className="rotate-45" />
                 </button>

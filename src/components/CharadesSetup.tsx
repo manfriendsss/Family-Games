@@ -35,7 +35,7 @@ export const CharadesSetup: React.FC<CharadesSetupProps> = ({
               🎬
             </div>
             <div>
-              <h2 className="text-lg font-black text-gray-900 leading-none mb-1 uppercase tracking-tight">Danh mục Charades</h2>
+              <h2 className="text-lg font-black text-gray-900 leading-none mb-1 uppercase tracking-tight">Danh mục trò chơi</h2>
               <p className="text-[13px] text-gray-400 font-bold">Chọn 1 hoặc nhiều chủ đề để chơi</p>
             </div>
           </div>

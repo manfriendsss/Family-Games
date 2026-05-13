@@ -10,22 +10,14 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ onGoToImposter, onGoToCharades }) => {
   return (
     <div className="space-y-4">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full bg-white rounded-[40px] p-2 shadow-sm border border-gray-100 overflow-hidden"
-      >
-        <img src="/familygame.webp" alt="Family Games" className="w-full h-48 object-cover rounded-[32px]" />
-      </motion.div>
-
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={onGoToImposter}
         className="w-full bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center gap-6 text-left group"
       >
-        <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-[#65A30D] transition-colors">
-          <Ghost size={32} className="text-white" />
+        <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden shadow-inner group-hover:ring-4 ring-lime-100 transition-all">
+          <img src="/ailanguoigiamao.webp" alt="Imposter" className="w-full h-full object-cover" />
         </div>
         <div className="flex-1">
           <h3 className="text-xl font-black text-gray-900 uppercase">Ai là người giả mạo?</h3>
@@ -40,8 +32,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onGoToImposter, onGoToChar
         onClick={onGoToCharades}
         className="w-full bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center gap-6 text-left group"
       >
-        <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-blue-500 transition-colors">
-          <Theater size={32} className="text-white" />
+        <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden shadow-inner group-hover:ring-4 ring-blue-100 transition-all">
+          <img src="/toilaai.webp" alt="Charades" className="w-full h-full object-cover" />
         </div>
         <div className="flex-1">
           <h3 className="text-xl font-black text-gray-900 uppercase">Tôi là ai?</h3>
