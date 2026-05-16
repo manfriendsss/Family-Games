@@ -13,7 +13,7 @@ import { Dashboard } from './components/Dashboard';
 import { ImposterSetup } from './components/ImposterSetup';
 import { CharadesSetup } from './components/CharadesSetup';
 import { CharadesCategoryPopup } from './components/CharadesCategoryPopup';
-import { RevealStage, DiscussionStage, VotingStage, ResultStage, CharadesResultStage } from './components/GameStages';
+import { RevealStage, DiscussionStage, VotingStage, ResultStage, CharadesResultStage, ShuffleStage } from './components/GameStages';
 
 import { useGameState } from './hooks/useGameState';
 
@@ -51,7 +51,7 @@ export default function App() {
     isPlayerManagerExpanded,
     setIsPlayerManagerExpanded
   } = useGameState();
-  const isRevealStage = stage === 'REVEAL';
+  const isRevealStage = stage === 'REVEAL' || stage === 'SHUFFLE';
   const handleEndRound = (onConfirm: () => void) => {
     if (window.confirm('Bạn chắc muốn kết thúc vòng chơi?')) {
       onConfirm();
@@ -153,6 +153,10 @@ export default function App() {
                 setIsPressing={setIsPressing}
                 onNext={() => gameMode === 'CHARADES' ? setStage('DISCUSSION') : nextReveal()}
               />
+            )}
+
+            {stage === 'SHUFFLE' && (
+              <ShuffleStage gameMode={gameMode} />
             )}
 
             {stage === 'DISCUSSION' && (

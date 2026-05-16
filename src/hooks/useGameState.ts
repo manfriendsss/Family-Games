@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Player, GameSettings, GameStage, Role, WordPair, GameMode, CharadesSettings, Difficulty } from '../types';
 import { CATEGORIES, CHARADES_CATEGORIES } from '../constants';
 
 export const useGameState = () => {
+  const shuffleTimerRef = useRef<number | null>(null);
   const [gameMode, setGameMode] = useState<GameMode>('DASHBOARD');
   const [stage, setStage] = useState<GameStage>('DASHBOARD');
   const [players, setPlayers] = useState<Player[]>(() => {
@@ -222,7 +223,7 @@ export const useGameState = () => {
       }
       setTalkOrder(order.map(p => p.id));
 
-      setStage('REVEAL');
+      startShuffleThenReveal();
       setActivePlayerIndex(0);
       setIsPressing(false);
     } catch (error) {
@@ -285,7 +286,7 @@ export const useGameState = () => {
       setCurrentActor(selectedActor || players[0]);
     }
 
-    setStage('REVEAL');
+    startShuffleThenReveal();
     setActivePlayerIndex(0);
   };
 
@@ -346,3 +347,17 @@ export const useGameState = () => {
     setIsPlayerManagerExpanded
   };
 };
+  useEffect(() => {
+    return () => {
+      if (shuffleTimerRef.current !== null) window.clearTimeout(shuffleTimerRef.current);
+    };
+  }, []);
+
+  const startShuffleThenReveal = () => {
+    if (shuffleTimerRef.current !== null) window.clearTimeout(shuffleTimerRef.current);
+    setStage('SHUFFLE');
+    shuffleTimerRef.current = window.setTimeout(() => {
+      setStage('REVEAL');
+      shuffleTimerRef.current = null;
+    }, 300);
+  };

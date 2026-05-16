@@ -3,6 +3,36 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Eye, EyeOff, ChevronRight, User, Info, RotateCcw } from 'lucide-react';
 import { Player, GameMode, WordPair, GameSettings, CharadesSettings } from '../types';
 
+export const ShuffleStage: React.FC<{ gameMode: GameMode }> = ({ gameMode }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      className="h-[100svh] flex items-center justify-center px-4"
+    >
+      <div className="relative w-56 h-80">
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            initial={{ rotate: i === 0 ? -6 : i === 1 ? 2 : 8, y: 0, x: 0, scale: 0.96 }}
+            animate={{
+              y: [-6, 6, -2, 0],
+              x: [i * 2, i * -2, 0],
+              rotate: [i === 0 ? -10 : i === 1 ? 3 : 10, i === 0 ? 6 : i === 1 ? -2 : -6, i === 0 ? -6 : i === 1 ? 2 : 8],
+              scale: [0.95, 1, 0.98]
+            }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className={`absolute inset-0 rounded-[36px] border-8 border-white shadow-2xl ${gameMode === 'CHARADES' ? 'bg-blue-600' : 'bg-[#65A30D]'}`}
+            style={{ zIndex: 3 - i }}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
 // REVEAL STAGE
 interface RevealStageProps {
   gameMode: GameMode;
@@ -33,7 +63,7 @@ export const RevealStage: React.FC<RevealStageProps> = ({
       initial={{ opacity: 0, x: 100 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -100 }}
-      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+      transition={{ type: 'spring', damping: 22, stiffness: 85 }}
       className="h-[100svh] flex flex-col justify-between gap-5 px-4 py-8 sm:py-10"
     >
       <div className="text-center space-y-2">
@@ -141,7 +171,7 @@ export const DiscussionStage: React.FC<DiscussionStageProps> = ({
   gameMode, currentCharadesWord, currentActor, talkOrder, players, charadesSettings, onNext
 }) => {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }} className="space-y-4">
       <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 text-center">
         <h2 className="text-2xl font-black mb-1 text-lime-600">{gameMode === 'CHARADES' ? 'Đang chơi Charades' : 'Thảo luận'}</h2>
         <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">{gameMode === 'CHARADES' ? 'Mọi người diễn tả cho người giữ máy đoán' : 'Điểm danh theo thứ tự'}</p>
@@ -230,7 +260,7 @@ export const CharadesResultStage: React.FC<CharadesResultStageProps> = ({
   onNewRound
 }) => {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }} className="space-y-6">
       <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 text-center">
         <h2 className="text-2xl font-black mb-1">Kết thúc vòng chơi</h2>
         <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Lật từ khóa để kiểm tra</p>
@@ -265,7 +295,7 @@ export const VotingStage: React.FC<VotingStageProps> = ({
   players, votes, hasVoted, onVote, onLockVotes, onShowResult
 }) => {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }} className="space-y-6">
       <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 text-center">
         <h2 className="text-2xl font-black mb-1">⚖️ Bình chọn</h2>
         <p className="text-gray-400 text-xs font-bold uppercase tracking-widest text-wrap">Ai là Imposter? Hãy chọn 1 người!</p>
@@ -325,7 +355,7 @@ export const ResultStage: React.FC<ResultStageProps> = ({
   currentWordPair, players, settings, onNewGame
 }) => {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }} className="space-y-6">
       <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 text-center">
         <h2 className="text-2xl font-black mb-1">🎭 Kết quả</h2>
         <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Kẻ giả mạo đã lộ diện</p>
