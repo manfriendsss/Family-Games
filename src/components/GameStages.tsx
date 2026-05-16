@@ -197,16 +197,6 @@ export const DiscussionStage: React.FC<DiscussionStageProps> = ({
         </ul>
       </div>
 
-      {gameMode === 'IMPOSTER' && (
-        <div className="pt-4">
-          <button
-            onClick={onNext}
-            className="w-full h-16 rounded-[24px] font-black text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2 bg-lime-400 text-black shadow-lime-200/50"
-          >
-            🚀 BẮT ĐẦU BÌNH CHỌN
-          </button>
-        </div>
-      )}
     </motion.div>
   );
 };
