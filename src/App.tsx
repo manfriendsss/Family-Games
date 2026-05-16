@@ -16,13 +16,14 @@ import { CharadesCategoryPopup } from './components/CharadesCategoryPopup';
 import { RevealStage, DiscussionStage, VotingStage, ResultStage, CharadesResultStage, ShuffleStage } from './components/GameStages';
 import { CaroSetup, CaroPlay } from './components/CaroGame';
 import { DoanTuSetup, DoanTuPlay } from './components/DoanTuGame';
+import { Player } from './types';
 
 import { useGameState } from './hooks/useGameState';
 
 export default function App() {
   const [caroBoardSize, setCaroBoardSize] = useState<3 | 15>(15);
-  const [doanTuSeconds, setDoanTuSeconds] = useState(45);
-  const [doanTuRounds, setDoanTuRounds] = useState(5);
+  const [doanTuDifficulty, setDoanTuDifficulty] = useState<'EASY' | 'HARD'>('EASY');
+  const [doanTuTeams, setDoanTuTeams] = useState<Array<{ name: string; members: Player[] }>>([]);
   const {
     gameMode, setGameMode,
     stage, setStage,
@@ -208,18 +209,20 @@ export default function App() {
 
             {stage === 'DOAN_TU_SETUP' && (
               <DoanTuSetup
-                turnSeconds={doanTuSeconds}
-                rounds={doanTuRounds}
-                onTurnSecondsChange={setDoanTuSeconds}
-                onRoundsChange={setDoanTuRounds}
-                onStart={() => setStage('DOAN_TU_PLAY')}
+                players={players}
+                difficulty={doanTuDifficulty}
+                onDifficultyChange={setDoanTuDifficulty}
+                onStart={(teams) => {
+                  setDoanTuTeams(teams);
+                  setStage('DOAN_TU_PLAY');
+                }}
               />
             )}
 
             {stage === 'DOAN_TU_PLAY' && (
               <DoanTuPlay
-                turnSeconds={doanTuSeconds}
-                rounds={doanTuRounds}
+                teams={doanTuTeams}
+                difficulty={doanTuDifficulty}
                 onBackToSetup={() => setStage('DOAN_TU_SETUP')}
               />
             )}
