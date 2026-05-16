@@ -113,6 +113,7 @@ export const useGameState = () => {
     }));
   };
 
+  const initiateGame = (overrideSettings?: GameSettings) => {
     let currentSettings = overrideSettings || settings;
     
     // Safety check: ensure at least 3 players
