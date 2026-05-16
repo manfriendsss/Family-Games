@@ -37,17 +37,22 @@ export const RevealStage: React.FC<RevealStageProps> = ({
         <p className="text-sm font-bold text-[#65A30D] uppercase tracking-[0.2em] bg-lime-50 inline-block px-4 py-1 rounded-full">
           {isCharades ? 'ĐẶT ĐIỆN THOẠI LÊN TRÁN' : 'LƯỢT CỦA BẠN'}
         </p>
+        {!isCharades && (
+          <p className="text-xs font-black text-gray-400 uppercase tracking-widest">
+            {activePlayerIndex + 1}/{players.length} người đã xem
+          </p>
+        )}
       </div>
 
       <div className="relative w-full max-w-[min(70vw,280px)] sm:max-w-[300px] aspect-[3/4.2] mx-auto">
         <motion.div
-          onPointerDown={() => !isCharades && setIsPressing(true)}
-          onPointerUp={() => !isCharades && setIsPressing(false)}
-          onPointerLeave={() => !isCharades && setIsPressing(false)}
+          onPointerDown={() => setIsPressing(true)}
+          onPointerUp={() => setIsPressing(false)}
+          onPointerLeave={() => setIsPressing(false)}
           className="w-full h-full relative cursor-none select-none touch-none"
         >
           <AnimatePresence mode="wait">
-            {!isPressing || isCharades ? (
+            {!isPressing ? (
               <motion.div
                 key="cover"
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -67,7 +72,7 @@ export const RevealStage: React.FC<RevealStageProps> = ({
                     {isCharades ? 'THẺ TỪ KHÓA ĐANG ÚP' : 'ẤN GIỮ ĐỂ XEM'}
                   </p>
                   <p className="text-white/60 font-bold text-xs uppercase tracking-widest leading-none">
-                    {isCharades ? 'MỌI NGƯỜI XUNG QUANH ĐÃ SẴN SÀNG' : 'TUYỆT ĐỐI BÍ MẬT'}
+                    {isCharades ? 'ẤN GIỮ ĐỂ MỌI NGƯỜI XEM TỪ KHÓA' : 'TUYỆT ĐỐI BÍ MẬT'}
                   </p>
                 </div>
               </motion.div>
@@ -77,16 +82,22 @@ export const RevealStage: React.FC<RevealStageProps> = ({
                 initial={{ scale: 1.1, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="absolute inset-0 bg-white rounded-[48px] shadow-inner flex flex-col items-center justify-center p-8 border-4 ring-8 border-[#65A30D] ring-lime-100"
+                className={`absolute inset-0 bg-white rounded-[48px] shadow-inner flex flex-col items-center justify-center p-8 border-4 ring-8 ${isCharades ? 'border-blue-600 ring-blue-50' : 'border-[#65A30D] ring-lime-100'}`}
               >
-                <div className="font-black text-[10px] sm:text-xs uppercase tracking-[0.25em] sm:tracking-[0.3em] mb-4 sm:mb-6 opacity-60 text-[#65A30D]">TỪ KHÓA BÍ MẬT</div>
+                <div className={`font-black text-[10px] sm:text-xs uppercase tracking-[0.25em] sm:tracking-[0.3em] mb-4 sm:mb-6 opacity-60 ${isCharades ? 'text-blue-600' : 'text-[#65A30D]'}`}>TỪ KHÓA BÍ MẬT</div>
                 <motion.div
                   initial={{ y: 20 }}
                   animate={{ y: 0 }}
-                  className="text-3xl sm:text-5xl font-black text-gray-900 border-b-8 pb-3 sm:pb-4 mb-5 sm:mb-8 text-center break-words border-lime-400"
+                  className={`text-3xl sm:text-5xl font-black text-gray-900 border-b-8 pb-3 sm:pb-4 mb-5 sm:mb-8 text-center break-words ${isCharades ? 'border-blue-400' : 'border-lime-400'}`}
                 >
-                  {players[activePlayerIndex].word}
+                  {isCharades ? currentCharadesWord : players[activePlayerIndex].word}
                 </motion.div>
+                {isCharades && currentActor && (
+                  <div className="text-center mb-4">
+                    <p className="text-[10px] font-black text-gray-400 uppercase mb-1">Người giữ máy</p>
+                    <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-black">{currentActor.name}</span>
+                  </div>
+                )}
                 <div className="flex flex-col items-center gap-2 opacity-30">
                   <EyeOff size={32} className="text-gray-400" />
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ĐỪNG ĐỂ NGƯỜI KHÁC THẤY</p>
