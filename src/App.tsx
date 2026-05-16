@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Play, RotateCcw } from 'lucide-react';
 
@@ -14,10 +14,12 @@ import { ImposterSetup } from './components/ImposterSetup';
 import { CharadesSetup } from './components/CharadesSetup';
 import { CharadesCategoryPopup } from './components/CharadesCategoryPopup';
 import { RevealStage, DiscussionStage, VotingStage, ResultStage, CharadesResultStage, ShuffleStage } from './components/GameStages';
+import { CaroSetup, CaroPlay } from './components/CaroGame';
 
 import { useGameState } from './hooks/useGameState';
 
 export default function App() {
+  const [caroBoardSize, setCaroBoardSize] = useState<3 | 15>(15);
   const {
     gameMode, setGameMode,
     stage, setStage,
@@ -108,6 +110,7 @@ export default function App() {
                 <Dashboard
                   onGoToImposter={() => { setGameMode('IMPOSTER'); setStage('SETUP'); }}
                   onGoToCharades={() => { setGameMode('CHARADES'); setStage('CHARADES_SETUP'); }}
+                  onGoToCaro={() => { setGameMode('CARO'); setStage('CARO_SETUP'); }}
                 />
               </motion.div>
             )}
@@ -159,6 +162,18 @@ export default function App() {
               <ShuffleStage gameMode={gameMode} />
             )}
 
+            {stage === 'CARO_SETUP' && (
+              <CaroSetup
+                boardSize={caroBoardSize}
+                onBoardSizeChange={setCaroBoardSize}
+                onStart={() => setStage('CARO_PLAY')}
+              />
+            )}
+
+            {stage === 'CARO_PLAY' && (
+              <CaroPlay boardSize={caroBoardSize} />
+            )}
+
             {stage === 'DISCUSSION' && (
               <DiscussionStage
                 gameMode={gameMode}
@@ -201,7 +216,7 @@ export default function App() {
           </AnimatePresence>
         </main>
 
-        {stage !== 'DASHBOARD' && (
+        {stage !== 'DASHBOARD' && gameMode !== 'CARO' && (
           <footer className="fixed bottom-[calc(env(safe-area-inset-bottom)+12px)] left-4 right-4 z-40 max-w-lg mx-auto">
             {stage === 'SETUP' || stage === 'CHARADES_SETUP' ? (
               <button

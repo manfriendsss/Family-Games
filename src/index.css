@@ -20,3 +20,23 @@ body {
   scrollbar-width: none;  /* Firefox */
 }
 
+.confetti-piece {
+  position: absolute;
+  top: -8%;
+  width: 10px;
+  height: 16px;
+  border-radius: 2px;
+  background: hsl(calc(var(--i, 0) * 18), 95%, 58%);
+  animation: confetti-fall 1.6s linear forwards;
+}
+
+.confetti-piece:nth-child(2n) { background: #ff6b6b; }
+.confetti-piece:nth-child(3n) { background: #4ecdc4; }
+.confetti-piece:nth-child(4n) { background: #ffd93d; }
+.confetti-piece:nth-child(5n) { background: #6c5ce7; }
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(115svh) rotate(540deg); opacity: 0.95; }
+}
+
