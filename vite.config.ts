@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
         manifest: {
           name: 'Family Games',
           short_name: 'FamilyGames',
-          description: 'Family party games: Imposter, Toi la ai, Co caro, Doan tu',
+          description: 'Trò chơi gia đình: Ai là người giả mạo, Tôi là ai, Cờ caro, Đoán từ',
           theme_color: '#B2FF3D',
           icons: [
             { src: 'familygame.webp', sizes: '192x192', type: 'image/webp' },

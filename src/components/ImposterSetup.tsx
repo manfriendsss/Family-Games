@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Info, Tag, Plus, Check, Settings, Clock, ChevronDown, Users, RotateCcw } from 'lucide-react';
-import { GameSettings, Category, Difficulty } from '../types';
+import { GameSettings, Player } from '../types';
 import { CATEGORIES } from '../constants';
 
 interface ImposterSetupProps {
