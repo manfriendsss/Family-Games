@@ -87,6 +87,21 @@ export const useGameState = () => {
     localStorage.setItem('family-games-pm-expanded', JSON.stringify(isPlayerManagerExpanded));
   }, [isPlayerManagerExpanded]);
 
+  useEffect(() => {
+    return () => {
+      if (shuffleTimerRef.current !== null) window.clearTimeout(shuffleTimerRef.current);
+    };
+  }, []);
+
+  const startShuffleThenReveal = () => {
+    if (shuffleTimerRef.current !== null) window.clearTimeout(shuffleTimerRef.current);
+    setStage('SHUFFLE');
+    shuffleTimerRef.current = window.setTimeout(() => {
+      setStage('REVEAL');
+      shuffleTimerRef.current = null;
+    }, 300);
+  };
+
   const getGameConditions = () => {
     const total = players.length;
     const adults = players.filter(p => p.isAdult !== false).length; 
@@ -347,17 +362,3 @@ export const useGameState = () => {
     setIsPlayerManagerExpanded
   };
 };
-  useEffect(() => {
-    return () => {
-      if (shuffleTimerRef.current !== null) window.clearTimeout(shuffleTimerRef.current);
-    };
-  }, []);
-
-  const startShuffleThenReveal = () => {
-    if (shuffleTimerRef.current !== null) window.clearTimeout(shuffleTimerRef.current);
-    setStage('SHUFFLE');
-    shuffleTimerRef.current = window.setTimeout(() => {
-      setStage('REVEAL');
-      shuffleTimerRef.current = null;
-    }, 300);
-  };
