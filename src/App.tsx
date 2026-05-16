@@ -54,6 +54,16 @@ export default function App() {
     setIsPlayerManagerExpanded
   } = useGameState();
   const isRevealStage = stage === 'REVEAL' || stage === 'SHUFFLE';
+  const isCaroPlayStage = stage === 'CARO_PLAY';
+  const isLockedViewportStage = isRevealStage || isCaroPlayStage;
+  const handleBack = () => {
+    if (gameMode === 'CARO' && stage === 'CARO_PLAY') {
+      setStage('CARO_SETUP');
+      return;
+    }
+    setGameMode('DASHBOARD');
+    setStage('DASHBOARD');
+  };
   const handleEndRound = (onConfirm: () => void) => {
     if (window.confirm('Bạn chắc muốn kết thúc vòng chơi?')) {
       onConfirm();
@@ -61,7 +71,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (!isRevealStage) return;
+    if (!isLockedViewportStage) return;
     const prevBodyOverflow = document.body.style.overflow;
     const prevHtmlOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -70,20 +80,28 @@ export default function App() {
       document.body.style.overflow = prevBodyOverflow;
       document.documentElement.style.overflow = prevHtmlOverflow;
     };
-  }, [isRevealStage]);
+  }, [isLockedViewportStage]);
+
+  useEffect(() => {
+    if (!(gameMode === 'CARO' && stage === 'CARO_PLAY')) return;
+    const onPopState = () => setStage('CARO_SETUP');
+    window.history.pushState({ caroPlay: true }, '');
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [gameMode, stage, setStage]);
 
   return (
-    <div className={`min-h-screen bg-[#F5F7F9] text-[#1D1D1F] font-sans flex justify-center ${isRevealStage ? 'p-0 overflow-hidden h-[100svh]' : 'p-4 md:p-8 pb-24'}`}>
-      <div className={`w-full max-w-lg flex flex-col ${isRevealStage ? 'gap-0 h-[100svh]' : 'gap-6'}`}>
+    <div className={`min-h-screen bg-[#F5F7F9] text-[#1D1D1F] font-sans flex justify-center ${isLockedViewportStage ? 'p-0 overflow-hidden h-[100svh]' : 'p-4 md:p-8 pb-24'}`}>
+      <div className={`w-full max-w-lg flex flex-col ${isLockedViewportStage ? 'gap-0 h-[100svh]' : 'gap-6'}`}>
         {!isRevealStage && (
           <GameHeader
             stage={stage}
             gameMode={gameMode}
-            onBack={() => { setGameMode('DASHBOARD'); setStage('DASHBOARD'); }}
+            onBack={handleBack}
           />
         )}
 
-        <main className={isRevealStage ? 'h-full overflow-hidden' : 'space-y-6 pb-32'}>
+        <main className={isLockedViewportStage ? 'h-full overflow-hidden' : 'space-y-6 pb-32'}>
           <AnimatePresence mode="wait">
             {stage === 'DASHBOARD' && (
               <motion.div
@@ -171,7 +189,13 @@ export default function App() {
             )}
 
             {stage === 'CARO_PLAY' && (
-              <CaroPlay boardSize={caroBoardSize} />
+              <CaroPlay
+                boardSize={caroBoardSize}
+                onSwitchBoard={(size) => {
+                  setCaroBoardSize(size);
+                  setStage('CARO_SETUP');
+                }}
+              />
             )}
 
             {stage === 'DISCUSSION' && (

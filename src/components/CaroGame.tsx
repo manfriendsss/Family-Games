@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+﻿import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RotateCcw } from 'lucide-react';
 
@@ -48,6 +48,7 @@ export const CaroSetup: React.FC<CaroSetupProps> = ({ boardSize, onBoardSizeChan
 
 interface CaroPlayProps {
   boardSize: 3 | 15;
+  onSwitchBoard: (size: 3 | 15) => void;
 }
 
 const checkWinnerAt = (board: Cell[][], row: number, col: number, winLen: number): Winner => {
@@ -83,7 +84,7 @@ const checkWinnerAt = (board: Cell[][], row: number, col: number, winLen: number
   return null;
 };
 
-export const CaroPlay: React.FC<CaroPlayProps> = ({ boardSize }) => {
+export const CaroPlay: React.FC<CaroPlayProps> = ({ boardSize, onSwitchBoard }) => {
   const winLen = boardSize === 3 ? 3 : 5;
   const makeBoard = () => Array.from({ length: boardSize }, () => Array<Cell>(boardSize).fill(null));
 
@@ -120,15 +121,17 @@ export const CaroPlay: React.FC<CaroPlayProps> = ({ boardSize }) => {
     setWinner(null);
   };
 
-  const cellFont = boardSize === 3 ? 'text-4xl' : 'text-sm sm:text-base';
-  const boardHeight = boardSize === 3 ? 'min-h-[320px]' : 'min-h-[78svh]';
+  const cellFont = boardSize === 3 ? 'text-5xl' : 'text-sm sm:text-base';
+  const boardHeight = boardSize === 3 ? 'min-h-[260px]' : 'min-h-[78svh]';
+  const boardWrap = boardSize === 3 ? 'max-w-[260px] mx-auto' : '';
+  const nextBoardSize: 3 | 15 = boardSize === 15 ? 3 : 15;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 h-[100svh] overflow-hidden pb-4">
       <section className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
         <div>
           <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Lượt hiện tại</p>
-          <p className={`font-black text-2xl ${current === 'X' ? 'text-blue-600' : 'text-red-500'}`}>{current}</p>
+          <p className={`font-extrabold text-2xl ${current === 'X' ? 'text-blue-600' : 'text-red-500'}`}>{current}</p>
         </div>
         <button
           onClick={resetBoard}
@@ -140,7 +143,7 @@ export const CaroPlay: React.FC<CaroPlayProps> = ({ boardSize }) => {
 
       <section className={`bg-white rounded-3xl p-3 shadow-sm border border-gray-100 ${boardHeight}`}>
         <div
-          className="grid gap-1 w-full h-full"
+          className={`grid gap-1 w-full h-full ${boardWrap}`}
           style={{ gridTemplateColumns: `repeat(${boardSize}, minmax(0, 1fr))` }}
         >
           {board.map((row, r) =>
@@ -150,7 +153,7 @@ export const CaroPlay: React.FC<CaroPlayProps> = ({ boardSize }) => {
                 onClick={() => handleMove(r, c)}
                 className="aspect-square rounded-md bg-gray-50 border border-gray-200 flex items-center justify-center active:scale-95 transition-transform [touch-action:manipulation]"
               >
-                <span className={`font-black ${cellFont} ${cell === 'X' ? 'text-blue-600' : cell === 'O' ? 'text-red-500' : 'text-transparent'}`}>
+                <span className={`font-extrabold ${cellFont} ${cell === 'X' ? 'text-blue-600' : cell === 'O' ? 'text-red-500' : 'text-transparent'}`}>
                   {cell || '·'}
                 </span>
               </button>
@@ -186,14 +189,22 @@ export const CaroPlay: React.FC<CaroPlayProps> = ({ boardSize }) => {
             >
               <h3 className="text-2xl font-black text-gray-900 mb-2">Chúc mừng!</h3>
               <p className="text-sm font-bold text-gray-500 mb-4">
-                {winner === 'DRAW' ? 'Ván cờ hòa, chơi lại nhé!' : `Người chơi ${winner} đã chiến thắng!`}
+                {winner === 'DRAW' ? 'Ván cờ hòa, chơi lại nhé!' : <>Người chơi <span className={`${winner === 'X' ? 'text-blue-600' : 'text-red-500'} font-extrabold text-lg`}>{winner}</span> đã chiến thắng!</>}
               </p>
-              <button
-                onClick={resetBoard}
-                className="w-full h-12 rounded-xl bg-[#B2FF3D] text-gray-900 font-black active:scale-95 transition-transform"
-              >
-                CHƠI VÁN MỚI
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={resetBoard}
+                  className="w-full h-12 rounded-xl bg-[#B2FF3D] text-gray-900 font-black active:scale-95 transition-transform"
+                >
+                  CHƠI VÁN MỚI
+                </button>
+                <button
+                  onClick={() => onSwitchBoard(nextBoardSize)}
+                  className="w-full h-11 rounded-xl bg-gray-900 text-white font-black active:scale-95 transition-transform"
+                >
+                  {nextBoardSize === 3 ? 'CHỌN BÀN 3x3' : 'CHỌN BÀN 15x15'}
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
