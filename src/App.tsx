@@ -179,14 +179,14 @@ export default function App() {
               >
                 <Play size={24} fill="currentColor" /> BẮT ĐẦU {stage === 'CHARADES_SETUP' ? 'TRÒ CHƠI' : 'GAME'}
               </button>
-            ) : (
+            ) : (stage === 'DISCUSSION' || stage === 'VOTING' || stage === 'RESULT') ? (
               <button
                 onClick={resetGame}
                 className="w-full bg-white/80 backdrop-blur-xl border border-gray-100 text-red-500 h-14 rounded-2xl font-black flex items-center justify-center gap-2 shadow-xl active:scale-95 transition-transform"
               >
                 <RotateCcw size={18} /> KẾT THÚC VÒNG CHƠI
               </button>
-            )}
+            ) : null}
           </footer>
         )}
       </div>

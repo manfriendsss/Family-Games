@@ -25,10 +25,10 @@ export const RevealStage: React.FC<RevealStageProps> = ({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -100 }}
       transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-      className="space-y-8 py-4"
+      className="min-h-[calc(100svh-220px)] flex flex-col justify-between gap-4 py-2"
     >
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-black text-gray-900">
+        <h2 className="text-2xl sm:text-3xl font-black text-gray-900 break-words">
           {gameMode === 'CHARADES' ? 'TẤT CẢ NGOÀI NGƯỜI ĐOÁN' : players[activePlayerIndex].name}
         </h2>
         <p className="text-sm font-bold text-[#65A30D] uppercase tracking-[0.2em] bg-lime-50 inline-block px-4 py-1 rounded-full">
@@ -36,7 +36,7 @@ export const RevealStage: React.FC<RevealStageProps> = ({
         </p>
       </div>
 
-      <div className="relative aspect-[3/4.2] max-w-[300px] mx-auto">
+      <div className="relative w-full max-w-[min(70vw,280px)] sm:max-w-[300px] aspect-[3/4.2] mx-auto">
         <motion.div
           onPointerDown={() => setIsPressing(true)}
           onPointerUp={() => setIsPressing(false)}
@@ -50,7 +50,7 @@ export const RevealStage: React.FC<RevealStageProps> = ({
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 1.1, opacity: 0 }}
-                className={`absolute inset-0 rounded-[48px] shadow-2xl flex flex-col items-center justify-center p-8 border-[12px] border-white group ${gameMode === 'CHARADES' ? 'bg-blue-600' : 'bg-[#65A30D]'}`}
+                className={`absolute inset-0 rounded-[36px] sm:rounded-[48px] shadow-2xl flex flex-col items-center justify-center p-6 sm:p-8 border-8 sm:border-[12px] border-white group ${gameMode === 'CHARADES' ? 'bg-blue-600' : 'bg-[#65A30D]'}`}
               >
                 <motion.div 
                   animate={{ y: [0, -10, 0], scale: [1, 1.1, 1] }}
@@ -76,7 +76,7 @@ export const RevealStage: React.FC<RevealStageProps> = ({
                 <motion.div 
                   initial={{ y: 20 }}
                   animate={{ y: 0 }}
-                  className={`text-5xl font-black text-gray-900 border-b-8 pb-4 mb-8 ${gameMode === 'CHARADES' ? 'border-blue-400' : 'border-lime-400'}`}
+                  className={`text-3xl sm:text-5xl font-black text-gray-900 border-b-8 pb-3 sm:pb-4 mb-5 sm:mb-8 text-center break-words ${gameMode === 'CHARADES' ? 'border-blue-400' : 'border-lime-400'}`}
                 >
                   {gameMode === 'CHARADES' ? currentCharadesWord : players[activePlayerIndex].word}
                 </motion.div>
@@ -96,10 +96,10 @@ export const RevealStage: React.FC<RevealStageProps> = ({
         </motion.div>
       </div>
 
-      <div className="pt-6 flex justify-center">
+      <div className="pt-2 sm:pt-4 flex justify-center">
         <button
           onClick={onNext}
-          className="w-full max-w-[300px] h-16 bg-gray-900 text-white rounded-[24px] font-black text-lg shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-3 border-4 border-white"
+          className="w-full max-w-[300px] h-14 sm:h-16 bg-gray-900 text-white rounded-[20px] sm:rounded-[24px] font-black text-base sm:text-lg shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-3 border-4 border-white"
         >
           XONG, BẮT ĐẦU <ChevronRight size={22} strokeWidth={3} />
         </button>
