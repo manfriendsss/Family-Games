@@ -82,11 +82,14 @@ const CONTEXTS = [
   'buổi sáng',
 ];
 
-// 64 seeds x 8 contexts = 512 cards
-export const DOAN_TU_CARDS: DoanTuCard[] = SEEDS.flatMap((seed) =>
-  CONTEXTS.map((ctx) => ({
-    keyword: `${seed.keyword} ${ctx}`,
-    taboo: [...seed.taboo],
-  }))
-);
+// 64 seeds x 8 contexts x 3 variants = 1536 cards
+const DOAN_TU_VARIANTS = ['Co ban', 'Nang cao', 'Sieu toc'];
 
+export const DOAN_TU_CARDS: DoanTuCard[] = DOAN_TU_VARIANTS.flatMap((variant) =>
+  SEEDS.flatMap((seed) =>
+    CONTEXTS.map((ctx) => ({
+      keyword: `${seed.keyword} ${ctx} (${variant})`,
+      taboo: [...seed.taboo],
+    }))
+  )
+);

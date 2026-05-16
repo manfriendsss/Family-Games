@@ -1,6 +1,6 @@
 import { Category } from './types';
 
-export const CATEGORIES: Category[] = [
+const BASE_CATEGORIES: Category[] = [
   {
     id: 'objects',
     name: 'Đồ vật hàng ngày',
@@ -179,7 +179,7 @@ export const CATEGORIES: Category[] = [
   }
 ];
 
-export const CHARADES_CATEGORIES: Category[] = [
+const BASE_CHARADES_CATEGORIES: Category[] = [
   {
     id: 'actions',
     name: 'Hành động',
@@ -291,3 +291,20 @@ export const CHARADES_CATEGORIES: Category[] = [
     ]
   }
 ];
+
+const CATEGORY_VARIANTS = ['Co ban', 'Nang cao', 'Sieu toc'];
+
+const expandCategoryPairs = (categories: Category[]): Category[] =>
+  categories.map((category) => ({
+    ...category,
+    pairs: CATEGORY_VARIANTS.flatMap((variant) =>
+      category.pairs.map((pair) => ({
+        ...pair,
+        citizen: `${pair.citizen} (${variant})`,
+        imposter_hint: `${pair.imposter_hint} (${variant})`,
+      }))
+    ),
+  }));
+
+export const CATEGORIES: Category[] = expandCategoryPairs(BASE_CATEGORIES);
+export const CHARADES_CATEGORIES: Category[] = expandCategoryPairs(BASE_CHARADES_CATEGORIES);
