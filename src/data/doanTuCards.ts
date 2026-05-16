@@ -1,0 +1,92 @@
+export interface DoanTuCard {
+  keyword: string;
+  taboo: string[];
+}
+
+const SEEDS: Array<{ keyword: string; taboo: string[] }> = [
+  { keyword: 'Bóng đá', taboo: ['cầu thủ', 'sân', 'ghi bàn'] },
+  { keyword: 'Bóng rổ', taboo: ['ném', 'rổ', 'trận đấu'] },
+  { keyword: 'Cầu lông', taboo: ['vợt', 'lưới', 'đánh'] },
+  { keyword: 'Bơi lội', taboo: ['hồ bơi', 'nước', 'bơi'] },
+  { keyword: 'Xe đạp', taboo: ['đạp', '2 bánh', 'yên xe'] },
+  { keyword: 'Xe máy', taboo: ['tay ga', 'xăng', 'đường'] },
+  { keyword: 'Ô tô', taboo: ['lái', 'bánh xe', 'đường'] },
+  { keyword: 'Tàu hỏa', taboo: ['đường ray', 'ga', 'toa'] },
+  { keyword: 'Máy bay', taboo: ['phi công', 'cất cánh', 'hàng không'] },
+  { keyword: 'Tàu thủy', taboo: ['biển', 'cảng', 'thuyền'] },
+  { keyword: 'Con mèo', taboo: ['meo', 'thú cưng', 'chuột'] },
+  { keyword: 'Con chó', taboo: ['sủa', 'thú cưng', 'đuôi'] },
+  { keyword: 'Con voi', taboo: ['to lớn', 'vòi', 'châu phi'] },
+  { keyword: 'Con hổ', taboo: ['rừng', 'vằn', 'mãnh thú'] },
+  { keyword: 'Con cá', taboo: ['nước', 'vây', 'bơi'] },
+  { keyword: 'Con gà', taboo: ['gáy', 'trứng', 'nuôi'] },
+  { keyword: 'Con vịt', taboo: ['bơi', 'kêu', 'ao'] },
+  { keyword: 'Con ong', taboo: ['mật', 'đốt', 'tổ ong'] },
+  { keyword: 'Bác sĩ', taboo: ['khám', 'bệnh viện', 'toa thuốc'] },
+  { keyword: 'Giáo viên', taboo: ['dạy', 'học sinh', 'trường'] },
+  { keyword: 'Công an', taboo: ['trật tự', 'đồng phục', 'pháp luật'] },
+  { keyword: 'Đầu bếp', taboo: ['nấu ăn', 'bếp', 'món ăn'] },
+  { keyword: 'Ca sĩ', taboo: ['hát', 'sân khấu', 'âm nhạc'] },
+  { keyword: 'Diễn viên', taboo: ['phim', 'vai diễn', 'đóng'] },
+  { keyword: 'Nông dân', taboo: ['ruộng', 'trồng', 'thu hoạch'] },
+  { keyword: 'Thợ xây', taboo: ['gạch', 'xi măng', 'công trình'] },
+  { keyword: 'Kem', taboo: ['lạnh', 'ốc quế', 'vani'] },
+  { keyword: 'Bánh mì', taboo: ['ổ bánh', 'ăn sáng', 'tiệm'] },
+  { keyword: 'Phở', taboo: ['nước dùng', 'bún', 'bò'] },
+  { keyword: 'Mì tôm', taboo: ['gói', 'nước sôi', 'ăn liền'] },
+  { keyword: 'Bánh sinh nhật', taboo: ['nến', 'thổi', 'tiệc'] },
+  { keyword: 'Nước ngọt', taboo: ['uống', 'ga', 'chai'] },
+  { keyword: 'Trà sữa', taboo: ['ly', 'trân châu', 'uống'] },
+  { keyword: 'Cơm', taboo: ['gạo', 'ăn', 'bữa'] },
+  { keyword: 'Điện thoại', taboo: ['smartphone', 'màn hình', 'cuộc gọi'] },
+  { keyword: 'Máy tính', taboo: ['bàn phím', 'chuột', 'màn hình'] },
+  { keyword: 'Tivi', taboo: ['xem', 'kênh', 'màn hình'] },
+  { keyword: 'Tủ lạnh', taboo: ['mát', 'nhà bếp', 'đá'] },
+  { keyword: 'Máy giặt', taboo: ['quần áo', 'xà phòng', 'vắt'] },
+  { keyword: 'Nồi cơm điện', taboo: ['nấu', 'gạo', 'cắm điện'] },
+  { keyword: 'Quạt máy', taboo: ['gió', 'mát', 'cánh quạt'] },
+  { keyword: 'Điều hòa', taboo: ['lạnh', 'remote', 'nhiệt độ'] },
+  { keyword: 'Bút chì', taboo: ['viết', 'tẩy', 'học'] },
+  { keyword: 'Quyển vở', taboo: ['học sinh', 'ghi chép', 'giấy'] },
+  { keyword: 'Cặp sách', taboo: ['đi học', 'mang', 'sách'] },
+  { keyword: 'Bảng đen', taboo: ['phấn', 'giáo viên', 'lớp học'] },
+  { keyword: 'Thước kẻ', taboo: ['đo', 'thẳng', 'học sinh'] },
+  { keyword: 'Con dao', taboo: ['cắt', 'sắc', 'nhà bếp'] },
+  { keyword: 'Cái kéo', taboo: ['cắt', '2 lưỡi', 'giấy'] },
+  { keyword: 'Bàn chải', taboo: ['đánh răng', 'kem', 'vệ sinh'] },
+  { keyword: 'Cái gương', taboo: ['soi', 'mặt', 'phản chiếu'] },
+  { keyword: 'Cầu vồng', taboo: ['mưa', '7 màu', 'bầu trời'] },
+  { keyword: 'Mặt trời', taboo: ['nóng', 'ban ngày', 'bầu trời'] },
+  { keyword: 'Mặt trăng', taboo: ['ban đêm', 'tròn', 'bầu trời'] },
+  { keyword: 'Đám mây', taboo: ['trời', 'trắng', 'mưa'] },
+  { keyword: 'Cơn mưa', taboo: ['nước', 'ô', 'ướt'] },
+  { keyword: 'Bãi biển', taboo: ['cát', 'sóng', 'du lịch'] },
+  { keyword: 'Ngọn núi', taboo: ['cao', 'leo', 'đỉnh'] },
+  { keyword: 'Dòng sông', taboo: ['nước', 'chảy', 'cầu'] },
+  { keyword: 'Trường học', taboo: ['học sinh', 'giáo viên', 'lớp'] },
+  { keyword: 'Bệnh viện', taboo: ['bác sĩ', 'khám', 'bệnh'] },
+  { keyword: 'Siêu thị', taboo: ['mua sắm', 'xe đẩy', 'hàng hóa'] },
+  { keyword: 'Công viên', taboo: ['cây xanh', 'đi dạo', 'trẻ em'] },
+  { keyword: 'Sân bay', taboo: ['máy bay', 'cất cánh', 'nhà ga'] },
+  { keyword: 'Nhà ga', taboo: ['tàu', 'chờ', 'đường ray'] },
+];
+
+const CONTEXTS = [
+  'ở trường',
+  'ở nhà',
+  'ngoài phố',
+  'ngày hè',
+  'cuối tuần',
+  'trong mơ',
+  'lễ hội',
+  'buổi sáng',
+];
+
+// 64 seeds x 8 contexts = 512 cards
+export const DOAN_TU_CARDS: DoanTuCard[] = SEEDS.flatMap((seed) =>
+  CONTEXTS.map((ctx) => ({
+    keyword: `${seed.keyword} ${ctx}`,
+    taboo: [...seed.taboo],
+  }))
+);
+

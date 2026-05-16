@@ -1,6 +1,7 @@
 ﻿import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { Player } from '../types';
+import { DOAN_TU_CARDS } from '../data/doanTuCards';
 
 type TeamName = string;
 type DifficultyMode = 'EASY' | 'HARD';
@@ -9,24 +10,6 @@ interface Card {
   keyword: string;
   taboo: string[];
 }
-
-const CARD_BANK: Card[] = [
-  { keyword: 'Bóng đá', taboo: ['cầu thủ', 'sân cỏ', 'ghi bàn'] },
-  { keyword: 'Máy bay', taboo: ['phi công', 'cất cánh', 'hàng không'] },
-  { keyword: 'Kem', taboo: ['lạnh', 'ốc quế', 'vani'] },
-  { keyword: 'Điện thoại', taboo: ['smartphone', 'màn hình', 'cuộc gọi'] },
-  { keyword: 'Mì tôm', taboo: ['gói', 'nước sôi', 'ăn liền'] },
-  { keyword: 'Bác sĩ', taboo: ['khám', 'bệnh viện', 'toa thuốc'] },
-  { keyword: 'Con mèo', taboo: ['meo meo', 'thú cưng', 'chuột'] },
-  { keyword: 'Bánh sinh nhật', taboo: ['nến', 'thổi', 'tiệc'] },
-  { keyword: 'Xe đạp', taboo: ['2 bánh', 'đạp', 'yên xe'] },
-  { keyword: 'Trường học', taboo: ['giáo viên', 'học sinh', 'lớp học'] },
-  { keyword: 'Bắp rang', taboo: ['rạp phim', 'ngô', 'giòn'] },
-  { keyword: 'Tủ lạnh', taboo: ['nhà bếp', 'đá', 'mát'] },
-  { keyword: 'Cầu vồng', taboo: ['mưa', '7 màu', 'bầu trời'] },
-  { keyword: 'Con voi', taboo: ['to lớn', 'vòi', 'châu phi'] },
-  { keyword: 'Nón bảo hiểm', taboo: ['xe máy', 'an toàn', 'đội đầu'] },
-];
 
 const TEAM_LABELS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const TURNS_PER_TEAM = 10;
@@ -38,11 +21,6 @@ const shuffle = <T,>(arr: T[]) => {
     [next[i], next[j]] = [next[j], next[i]];
   }
   return next;
-};
-
-const pickCard = (exclude?: string) => {
-  const pool = CARD_BANK.filter((c) => c.keyword !== exclude);
-  return pool[Math.floor(Math.random() * pool.length)] || CARD_BANK[0];
 };
 
 const playBeep = (freq: number, ms: number, delay = 0) => {
@@ -158,6 +136,7 @@ export const DoanTuSetup: React.FC<DoanTuSetupProps> = ({ players, difficulty, o
       <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
         <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Người chơi hiện tại</p>
         <p className="text-sm font-black text-gray-700">{players.length} người</p>
+        <p className="text-xs font-black text-pink-600 mt-1">Kho từ hiện có: {DOAN_TU_CARDS.length} thẻ</p>
         <p className="text-xs font-bold text-gray-500 mt-1">Muốn bắt đầu cần số người chơi chẵn.</p>
       </section>
 
@@ -181,7 +160,9 @@ export const DoanTuPlay: React.FC<DoanTuPlayProps> = ({ teams, difficulty, onBac
   const [teamIdx, setTeamIdx] = useState(0);
   const [turnInTeam, setTurnInTeam] = useState(1);
   const [scores, setScores] = useState<Record<string, number>>(() => Object.fromEntries(teams.map((t) => [t.name, 0])));
-  const [card, setCard] = useState<Card>(pickCard());
+  const [deck, setDeck] = useState<Card[]>(() => shuffle(DOAN_TU_CARDS));
+  const [deckIndex, setDeckIndex] = useState(0);
+  const [card, setCard] = useState<Card>(() => shuffle(DOAN_TU_CARDS)[0]);
   const [phase, setPhase] = useState<'PLAY' | 'TEAM_END' | 'FINAL'>('PLAY');
 
   const team = teams[teamIdx];
@@ -189,7 +170,17 @@ export const DoanTuPlay: React.FC<DoanTuPlayProps> = ({ teams, difficulty, onBac
 
   const goNextCard = () => {
     notifyKeywordChange();
-    setCard((prev) => pickCard(prev.keyword));
+    setDeckIndex((idx) => {
+      const next = idx + 1;
+      if (next >= deck.length) {
+        const reshuffled = shuffle(DOAN_TU_CARDS);
+        setDeck(reshuffled);
+        setCard(reshuffled[0]);
+        return 0;
+      }
+      setCard(deck[next]);
+      return next;
+    });
   };
 
   const apply = (kind: 'CORRECT' | 'SKIP' | 'FOUL') => {
@@ -214,7 +205,7 @@ export const DoanTuPlay: React.FC<DoanTuPlayProps> = ({ teams, difficulty, onBac
     }
     setTeamIdx((i) => i + 1);
     setTurnInTeam(1);
-    setCard(pickCard());
+    goNextCard();
     setPhase('PLAY');
   };
 
