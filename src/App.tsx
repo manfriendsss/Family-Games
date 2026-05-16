@@ -15,11 +15,14 @@ import { CharadesSetup } from './components/CharadesSetup';
 import { CharadesCategoryPopup } from './components/CharadesCategoryPopup';
 import { RevealStage, DiscussionStage, VotingStage, ResultStage, CharadesResultStage, ShuffleStage } from './components/GameStages';
 import { CaroSetup, CaroPlay } from './components/CaroGame';
+import { DoanTuSetup, DoanTuPlay } from './components/DoanTuGame';
 
 import { useGameState } from './hooks/useGameState';
 
 export default function App() {
   const [caroBoardSize, setCaroBoardSize] = useState<3 | 15>(15);
+  const [doanTuSeconds, setDoanTuSeconds] = useState(45);
+  const [doanTuRounds, setDoanTuRounds] = useState(5);
   const {
     gameMode, setGameMode,
     stage, setStage,
@@ -59,6 +62,10 @@ export default function App() {
   const handleBack = () => {
     if (gameMode === 'CARO' && stage === 'CARO_PLAY') {
       setStage('CARO_SETUP');
+      return;
+    }
+    if (gameMode === 'DOAN_TU' && stage === 'DOAN_TU_PLAY') {
+      setStage('DOAN_TU_SETUP');
       return;
     }
     setGameMode('DASHBOARD');
@@ -129,6 +136,7 @@ export default function App() {
                   onGoToImposter={() => { setGameMode('IMPOSTER'); setStage('SETUP'); }}
                   onGoToCharades={() => { setGameMode('CHARADES'); setStage('CHARADES_SETUP'); }}
                   onGoToCaro={() => { setGameMode('CARO'); setStage('CARO_SETUP'); }}
+                  onGoToDoanTu={() => { setGameMode('DOAN_TU'); setStage('DOAN_TU_SETUP'); }}
                 />
               </motion.div>
             )}
@@ -198,6 +206,24 @@ export default function App() {
               />
             )}
 
+            {stage === 'DOAN_TU_SETUP' && (
+              <DoanTuSetup
+                turnSeconds={doanTuSeconds}
+                rounds={doanTuRounds}
+                onTurnSecondsChange={setDoanTuSeconds}
+                onRoundsChange={setDoanTuRounds}
+                onStart={() => setStage('DOAN_TU_PLAY')}
+              />
+            )}
+
+            {stage === 'DOAN_TU_PLAY' && (
+              <DoanTuPlay
+                turnSeconds={doanTuSeconds}
+                rounds={doanTuRounds}
+                onBackToSetup={() => setStage('DOAN_TU_SETUP')}
+              />
+            )}
+
             {stage === 'DISCUSSION' && (
               <DiscussionStage
                 gameMode={gameMode}
@@ -240,7 +266,7 @@ export default function App() {
           </AnimatePresence>
         </main>
 
-        {stage !== 'DASHBOARD' && gameMode !== 'CARO' && (
+        {stage !== 'DASHBOARD' && gameMode !== 'CARO' && gameMode !== 'DOAN_TU' && (
           <footer className="fixed bottom-[calc(env(safe-area-inset-bottom)+12px)] left-4 right-4 z-40 max-w-lg mx-auto">
             {stage === 'SETUP' || stage === 'CHARADES_SETUP' ? (
               <button

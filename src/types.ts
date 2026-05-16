@@ -4,7 +4,7 @@
  */
 
 export type Role = 'CITIZEN' | 'IMPOSTER';
-export type GameMode = 'DASHBOARD' | 'IMPOSTER' | 'CHARADES' | 'CARO';
+export type GameMode = 'DASHBOARD' | 'IMPOSTER' | 'CHARADES' | 'CARO' | 'DOAN_TU';
 
 export interface Player {
   id: string;
@@ -46,4 +46,4 @@ export interface CharadesSettings {
   mode: 'ACTIONS_AND_HINTS' | 'ACTIONS_ONLY';
 }
 
-export type GameStage = 'DASHBOARD' | 'SETUP' | 'SHUFFLE' | 'REVEAL' | 'DISCUSSION' | 'VOTING' | 'RESULT' | 'CHARADES_SETUP' | 'CHARADES_RESULT' | 'CARO_SETUP' | 'CARO_PLAY';
+export type GameStage = 'DASHBOARD' | 'SETUP' | 'SHUFFLE' | 'REVEAL' | 'DISCUSSION' | 'VOTING' | 'RESULT' | 'CHARADES_SETUP' | 'CHARADES_RESULT' | 'CARO_SETUP' | 'CARO_PLAY' | 'DOAN_TU_SETUP' | 'DOAN_TU_PLAY';
