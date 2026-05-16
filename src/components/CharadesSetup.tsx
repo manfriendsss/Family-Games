@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ChevronRight, Check, Plus, Clock, ChevronDown, User, LayoutGrid } from 'lucide-react';
+import { ChevronRight, Check, Plus, Clock, ChevronDown, User, LayoutGrid, Users } from 'lucide-react';
 import { CharadesSettings, Player, Category } from '../types';
 import { CHARADES_CATEGORIES } from '../constants';
 
@@ -40,6 +40,21 @@ export const CharadesSetup: React.FC<CharadesSetupProps> = ({
             </div>
           </div>
           <ChevronRight className="text-gray-300" size={20} />
+        </div>
+
+        {/* Players Summary in Charades */}
+        <div className="px-1 mb-6">
+           <div className="flex items-center gap-2 mb-3">
+              <Users size={16} className="text-gray-400" />
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Đội hình chơi</h3>
+           </div>
+           <div className="flex flex-wrap gap-2">
+              {players.map(p => (
+                <span key={p.id} className="px-3 py-1 bg-gray-50 border border-gray-50 rounded-full text-[10px] font-bold text-gray-500">
+                  {p.isAdult === false ? '👶' : '👤'} {p.name}
+                </span>
+              ))}
+           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-2">

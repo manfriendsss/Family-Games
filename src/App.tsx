@@ -91,6 +91,7 @@ export default function App() {
             {stage === 'SETUP' && (
               <ImposterSetup 
                 settings={settings}
+                players={players}
                 showAllCategories={showAllCategories}
                 onToggleCategory={toggleCategory}
                 onShowAllCategories={() => setShowAllCategories(true)}

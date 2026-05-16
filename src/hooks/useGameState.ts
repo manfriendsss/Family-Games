@@ -1,29 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Player, GameSettings, GameStage, Role, WordPair, GameMode, CharadesSettings, Difficulty } from '../types';
 import { CATEGORIES, CHARADES_CATEGORIES } from '../constants';
 
 export const useGameState = () => {
   const [gameMode, setGameMode] = useState<GameMode>('DASHBOARD');
   const [stage, setStage] = useState<GameStage>('DASHBOARD');
-  const [players, setPlayers] = useState<Player[]>([
-    { id: '1', name: 'Người chơi 1', isRevealed: false },
-    { id: '2', name: 'Người chơi 2', isRevealed: false },
-    { id: '3', name: 'Người chơi 3', isRevealed: false },
-    { id: '4', name: 'Người chơi 4', isRevealed: false },
-  ]);
-  const [settings, setSettings] = useState<GameSettings>({
-    timeLimit: false,
-    imposterCount: 1,
-    difficulty: 'EASY',
-    selectedCategories: ['objects'],
+  const [players, setPlayers] = useState<Player[]>(() => {
+    const saved = localStorage.getItem('family-games-players');
+    const parsed = saved ? JSON.parse(saved) : null;
+    if (parsed && Array.isArray(parsed) && parsed.length >= 3) return parsed;
+    return [
+      { id: '1', name: 'Người chơi 1', isRevealed: false, isAdult: true },
+      { id: '2', name: 'Người chơi 2', isRevealed: false, isAdult: true },
+      { id: '3', name: 'Người chơi 3', isRevealed: false, isAdult: true },
+      { id: '4', name: 'Người chơi 4', isRevealed: false, isAdult: true },
+    ];
   });
-  const [charadesSettings, setCharadesSettings] = useState<CharadesSettings>({
-    selectedCategories: ['actions'],
-    timeLimit: true,
-    timeSeconds: 60,
-    actorId: 'RANDOM',
-    mode: 'ACTIONS_AND_HINTS',
+  const [settings, setSettings] = useState<GameSettings>(() => {
+    const saved = localStorage.getItem('family-games-settings');
+    return saved ? JSON.parse(saved) : {
+      timeLimit: false,
+      imposterCount: 1,
+      difficulty: 'EASY',
+      selectedCategories: ['objects'],
+    };
   });
+  const [charadesSettings, setCharadesSettings] = useState<CharadesSettings>(() => {
+    const saved = localStorage.getItem('family-games-charades-settings');
+    return saved ? JSON.parse(saved) : {
+      selectedCategories: ['actions'],
+      timeLimit: true,
+      timeSeconds: 60,
+      actorId: 'RANDOM',
+      mode: 'ACTIONS_AND_HINTS',
+    };
+  });
+
   const [currentWordPair, setCurrentWordPair] = useState<WordPair | null>(null);
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
   const [talkOrder, setTalkOrder] = useState<string[]>([]);
@@ -37,12 +49,29 @@ export const useGameState = () => {
   const [currentCharadesWord, setCurrentCharadesWord] = useState<string>('');
   const [currentActor, setCurrentActor] = useState<Player | null>(null);
 
+  // Persist to localStorage
+  useEffect(() => {
+    localStorage.setItem('family-games-players', JSON.stringify(players.map(p => ({
+      id: p.id,
+      name: p.name,
+      isAdult: p.isAdult
+    }))));
+  }, [players]);
+
+  useEffect(() => {
+    localStorage.setItem('family-games-settings', JSON.stringify(settings));
+  }, [settings]);
+
+  useEffect(() => {
+    localStorage.setItem('family-games-charades-settings', JSON.stringify(charadesSettings));
+  }, [charadesSettings]);
+
   const getGameConditions = () => {
     const total = players.length;
-    const adults = players.filter(p => p.isAdult !== false).length; // Default to adult if not specified
+    const adults = players.filter(p => p.isAdult !== false).length; 
     const children = players.filter(p => p.isAdult === false).length;
     
-    if (players.every(p => p.isAdult === undefined)) return { difficulty: 'EASY' as Difficulty, mode: 'NORMAL' };
+    if (players.length === 0) return { difficulty: 'EASY' as Difficulty, mode: 'NORMAL' };
     if (children === total) return { difficulty: 'VERY_EASY' as Difficulty, mode: 'KIDS_ONLY' };
     if (adults === total) return { difficulty: 'HARD' as Difficulty, mode: 'ADULTS_ONLY' };
     if (children > 0 && adults > 0) return { difficulty: 'EASY' as Difficulty, mode: 'MIXED' };
@@ -73,24 +102,27 @@ export const useGameState = () => {
   const toggleCategory = (id: string) => {
     setSettings(prev => ({
       ...prev,
-      selectedCategories: prev.selectedCategories.includes(id)
-        ? prev.selectedCategories.filter(c => c !== id)
-        : [...prev.selectedCategories, id]
+      selectedCategories: [id]
     }));
   };
 
   const toggleCharadesCategory = (id: string) => {
     setCharadesSettings(prev => ({
       ...prev,
-      selectedCategories: prev.selectedCategories.includes(id)
-        ? prev.selectedCategories.filter(c => c !== id)
-        : [...prev.selectedCategories, id]
+      selectedCategories: [id]
     }));
   };
 
-  const initiateGame = (overrideSettings?: GameSettings) => {
-    const currentSettings = overrideSettings || settings;
-    if (currentSettings.selectedCategories.length === 0) return;
+    let currentSettings = overrideSettings || settings;
+    
+    // Safety check: ensure at least 3 players
+    if (players.length < 3) return;
+
+    // Ensure at least one category is selected
+    if (!currentSettings.selectedCategories || currentSettings.selectedCategories.length === 0) {
+      currentSettings = { ...currentSettings, selectedCategories: [CATEGORIES[0].id] };
+      setSettings(currentSettings);
+    }
 
     const { difficulty: autoDifficulty, mode } = getGameConditions();
     const effectiveDifficulty = overrideSettings ? currentSettings.difficulty : autoDifficulty;
@@ -179,10 +211,18 @@ export const useGameState = () => {
   };
 
   const initiateCharades = () => {
-    if (charadesSettings.selectedCategories.length === 0) return;
+    let currentSettings = charadesSettings;
+    
+    // Safety check: ensure at least 1 player
+    if (players.length === 0) return;
+
+    if (!currentSettings.selectedCategories || currentSettings.selectedCategories.length === 0) {
+      currentSettings = { ...currentSettings, selectedCategories: [CHARADES_CATEGORIES[0].id] };
+      setCharadesSettings(currentSettings);
+    }
     const { difficulty: effectiveDifficulty } = getGameConditions();
 
-    const randomCatId = charadesSettings.selectedCategories[Math.floor(Math.random() * charadesSettings.selectedCategories.length)];
+    const randomCatId = currentSettings.selectedCategories[Math.floor(Math.random() * currentSettings.selectedCategories.length)];
     const category = CHARADES_CATEGORIES.find(c => c.id === randomCatId) || CATEGORIES.find(c => c.id === randomCatId);
     if (!category) return;
     
@@ -215,6 +255,7 @@ export const useGameState = () => {
     setPlayers(players.map(p => ({ ...p, isRevealed: false, role: undefined, word: undefined })));
     setVotes({});
     setHasVoted(false);
+    setActivePlayerIndex(0);
   };
 
   const nextReveal = () => {

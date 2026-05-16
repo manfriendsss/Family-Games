@@ -6,6 +6,7 @@ import { CATEGORIES } from '../constants';
 
 interface ImposterSetupProps {
   settings: GameSettings;
+  players: Player[];
   showAllCategories: boolean;
   onToggleCategory: (id: string) => void;
   onShowAllCategories: () => void;
@@ -15,6 +16,7 @@ interface ImposterSetupProps {
 
 export const ImposterSetup: React.FC<ImposterSetupProps> = ({
   settings,
+  players,
   showAllCategories,
   onToggleCategory,
   onShowAllCategories,
@@ -42,6 +44,21 @@ export const ImposterSetup: React.FC<ImposterSetupProps> = ({
             Tất cả mọi người sẽ nhận được một từ giống nhau, ngoại trừ <span className="text-red-400">Kẻ giả mạo</span>. 
             Kẻ giả mạo sẽ nhận được một từ gợi ý gần giống. Hãy diễn tả thật khéo léo để không bị lộ!
           </p>
+        </div>
+      </section>
+
+      {/* Players Summary */}
+      <section className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-3">
+          <Users size={16} className="text-gray-400" />
+          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Người chơi tham gia</h3>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {players.map(p => (
+            <span key={p.id} className="px-3 py-1 bg-gray-50 border border-gray-100 rounded-full text-[11px] font-bold text-gray-600">
+              {p.isAdult === false ? '👶' : '👤'} {p.name}
+            </span>
+          ))}
         </div>
       </section>
 
