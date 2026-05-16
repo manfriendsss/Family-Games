@@ -48,6 +48,10 @@ export const useGameState = () => {
   const [showCharadesCategoryPopup, setShowCharadesCategoryPopup] = useState(false);
   const [currentCharadesWord, setCurrentCharadesWord] = useState<string>('');
   const [currentActor, setCurrentActor] = useState<Player | null>(null);
+  const [isPlayerManagerExpanded, setIsPlayerManagerExpanded] = useState<boolean>(() => {
+    const saved = localStorage.getItem('family-games-pm-expanded');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
 
   // Persist to localStorage
   useEffect(() => {
@@ -65,6 +69,10 @@ export const useGameState = () => {
   useEffect(() => {
     localStorage.setItem('family-games-charades-settings', JSON.stringify(charadesSettings));
   }, [charadesSettings]);
+
+  useEffect(() => {
+    localStorage.setItem('family-games-pm-expanded', JSON.stringify(isPlayerManagerExpanded));
+  }, [isPlayerManagerExpanded]);
 
   const getGameConditions = () => {
     const total = players.length;
@@ -95,8 +103,8 @@ export const useGameState = () => {
     setPlayers(players.map(p => p.id === id ? { ...p, name } : p));
   };
 
-  const togglePlayerType = (id: string) => {
-    setPlayers(players.map(p => p.id === id ? { ...p, isAdult: !p.isAdult } : p));
+  const updatePlayerType = (id: string, isAdult: boolean) => {
+    setPlayers(players.map(p => p.id === id ? { ...p, isAdult } : p));
   };
 
   const toggleCategory = (id: string) => {
@@ -117,86 +125,98 @@ export const useGameState = () => {
     let currentSettings = overrideSettings || settings;
     
     // Safety check: ensure at least 3 players
-    if (players.length < 3) return;
+    if (players.length < 3) {
+      alert("Cần ít nhất 3 người chơi để bắt đầu game Imposter!");
+      return;
+    }
 
-    // Ensure at least one category is selected
-    if (!currentSettings.selectedCategories || currentSettings.selectedCategories.length === 0) {
-      currentSettings = { ...currentSettings, selectedCategories: [CATEGORIES[0].id] };
+    // Validate and fix categories
+    const validCategoryIds = CATEGORIES.map(c => c.id);
+    const rawCats = currentSettings.selectedCategories || [];
+    let selectedCats = rawCats.filter(id => validCategoryIds.includes(id));
+    
+    if (selectedCats.length === 0) {
+      selectedCats = [CATEGORIES[0].id];
+      currentSettings = { ...currentSettings, selectedCategories: selectedCats };
       setSettings(currentSettings);
     }
 
     const { difficulty: autoDifficulty, mode } = getGameConditions();
     const effectiveDifficulty = overrideSettings ? currentSettings.difficulty : autoDifficulty;
 
-    const targetCats = currentSettings.selectedCategories;
-    const randomCatId = targetCats[Math.floor(Math.random() * targetCats.length)];
-    const category = CATEGORIES.find(c => c.id === randomCatId);
-    if (!category) return;
-
+    const randomCatId = selectedCats[Math.floor(Math.random() * selectedCats.length)];
+    const category = CATEGORIES.find(c => c.id === randomCatId) || CATEGORIES[0];
+    
     let availablePairs = category.pairs.filter(p => p.difficulty === effectiveDifficulty);
     if (availablePairs.length === 0) availablePairs = category.pairs;
     
-    const wordPair = availablePairs[Math.floor(Math.random() * availablePairs.length)];
-    setCurrentWordPair(wordPair);
+    try {
+      const wordPair = availablePairs[Math.floor(Math.random() * availablePairs.length)];
+      if (!wordPair) throw new Error("Không tìm thấy từ khóa!");
+      
+      setCurrentWordPair(wordPair);
 
-    let newPlayers = [...players].map(p => ({ ...p, isRevealed: false, role: 'CITIZEN' as Role }));
-    
-    let imposterCandidates = [...newPlayers];
-    if (mode === 'MIXED') {
-        const adults = newPlayers.filter(p => p.isAdult !== false);
-        const kids = newPlayers.filter(p => p.isAdult === false);
-        const weightedPool: Player[] = [];
-        adults.forEach(p => { for(let i=0; i<3; i++) weightedPool.push(p); });
-        kids.forEach(p => weightedPool.push(p));
-        
-        const count = Math.min(currentSettings.imposterCount, newPlayers.length - 1);
-        for (let i = 0; i < count; i++) {
-            if (weightedPool.length === 0) break;
-            const chosen = weightedPool[Math.floor(Math.random() * weightedPool.length)];
-            const pIdx = newPlayers.findIndex(p => p.id === chosen.id);
-            if (pIdx !== -1 && newPlayers[pIdx].role !== 'IMPOSTER') {
-                newPlayers[pIdx].role = 'IMPOSTER';
-                for(let j=weightedPool.length-1; j>=0; j--) {
-                    if (weightedPool[j].id === chosen.id) weightedPool.splice(j, 1);
-                }
-            } else {
-                i--;
-            }
-        }
-    } else {
-        const shuffledIdx = Array.from({ length: newPlayers.length }, (_, i) => i).sort(() => Math.random() - 0.5);
-        for (let i = 0; i < Math.min(currentSettings.imposterCount, newPlayers.length - 1); i++) {
-            newPlayers[shuffledIdx[i]].role = 'IMPOSTER';
-        }
-    }
-
-    newPlayers = newPlayers.map(p => ({
-      ...p,
-      word: p.role === 'CITIZEN' 
-        ? wordPair.citizen 
-        : (effectiveDifficulty === 'HARD' ? 'Bạn không có gợi ý' : wordPair.imposter_hint)
-    }));
-
-    setPlayers(newPlayers);
-
-    let order = [...newPlayers].sort(() => Math.random() - 0.5);
-    const isInvalidFirstSpeaker = (p: typeof newPlayers[0]) => {
-        if (p.role === 'IMPOSTER') return true;
-        if (mode === 'MIXED' && p.isAdult === false) return true;
-        return false;
-    };
-
-    if (isInvalidFirstSpeaker(order[0])) {
-      const validFirstIdx = order.findIndex(p => !isInvalidFirstSpeaker(p));
-      if (validFirstIdx !== -1) {
-        [order[0], order[validFirstIdx]] = [order[validFirstIdx], order[0]];
+      let newPlayers = [...players].map(p => ({ ...p, isRevealed: false, role: 'CITIZEN' as Role }));
+      
+      if (mode === 'MIXED') {
+          const adults = newPlayers.filter(p => p.isAdult !== false);
+          const kids = newPlayers.filter(p => p.isAdult === false);
+          const weightedPool: Player[] = [];
+          adults.forEach(p => { for(let i=0; i<3; i++) weightedPool.push(p); });
+          kids.forEach(p => weightedPool.push(p));
+          
+          const count = Math.min(currentSettings.imposterCount, newPlayers.length - 1);
+          for (let i = 0; i < count; i++) {
+              if (weightedPool.length === 0) break;
+              const chosen = weightedPool[Math.floor(Math.random() * weightedPool.length)];
+              const pIdx = newPlayers.findIndex(p => p.id === chosen.id);
+              if (pIdx !== -1 && newPlayers[pIdx].role !== 'IMPOSTER') {
+                  newPlayers[pIdx].role = 'IMPOSTER';
+                  for(let j=weightedPool.length-1; j>=0; j--) {
+                      if (weightedPool[j].id === chosen.id) weightedPool.splice(j, 1);
+                  }
+              } else {
+                  i--;
+              }
+          }
+      } else {
+          const shuffledIdx = Array.from({ length: newPlayers.length }, (_, i) => i).sort(() => Math.random() - 0.5);
+          for (let i = 0; i < Math.min(currentSettings.imposterCount, newPlayers.length - 1); i++) {
+              newPlayers[shuffledIdx[i]].role = 'IMPOSTER';
+          }
       }
-    }
-    setTalkOrder(order.map(p => p.id));
 
-    setStage('REVEAL');
-    setActivePlayerIndex(0);
-    setIsPressing(false);
+      newPlayers = newPlayers.map(p => ({
+        ...p,
+        word: p.role === 'CITIZEN' 
+          ? wordPair.citizen 
+          : (effectiveDifficulty === 'HARD' ? 'Bạn không có gợi ý' : wordPair.imposter_hint)
+      }));
+
+      setPlayers(newPlayers);
+
+      let order = [...newPlayers].sort(() => Math.random() - 0.5);
+      const isInvalidFirstSpeaker = (p: typeof newPlayers[0]) => {
+          if (p.role === 'IMPOSTER') return true;
+          if (mode === 'MIXED' && p.isAdult === false) return true;
+          return false;
+      };
+
+      if (isInvalidFirstSpeaker(order[0])) {
+        const validFirstIdx = order.findIndex(p => !isInvalidFirstSpeaker(p));
+        if (validFirstIdx !== -1) {
+          [order[0], order[validFirstIdx]] = [order[validFirstIdx], order[0]];
+        }
+      }
+      setTalkOrder(order.map(p => p.id));
+
+      setStage('REVEAL');
+      setActivePlayerIndex(0);
+      setIsPressing(false);
+    } catch (error) {
+      console.error("Lỗi khi bắt đầu game:", error);
+      alert("Có lỗi xảy ra khi bắt đầu game. Vui lòng kiểm tra lại thiết lập.");
+    }
   };
 
   const startQuickMode = () => {
@@ -215,17 +235,25 @@ export const useGameState = () => {
     let currentSettings = charadesSettings;
     
     // Safety check: ensure at least 1 player
-    if (players.length === 0) return;
+    if (players.length === 0) {
+      alert("Cần ít nhất 1 người chơi để bắt đầu!");
+      return;
+    }
 
-    if (!currentSettings.selectedCategories || currentSettings.selectedCategories.length === 0) {
-      currentSettings = { ...currentSettings, selectedCategories: [CHARADES_CATEGORIES[0].id] };
+    // Validate categories
+    const allValidCats = [...CHARADES_CATEGORIES.map(c => c.id), ...CATEGORIES.map(c => c.id)];
+    const rawCats = currentSettings.selectedCategories || [];
+    let selectedCats = rawCats.filter(id => allValidCats.includes(id));
+
+    if (selectedCats.length === 0) {
+      selectedCats = [CHARADES_CATEGORIES[0].id];
+      currentSettings = { ...currentSettings, selectedCategories: selectedCats };
       setCharadesSettings(currentSettings);
     }
     const { difficulty: effectiveDifficulty } = getGameConditions();
 
-    const randomCatId = currentSettings.selectedCategories[Math.floor(Math.random() * currentSettings.selectedCategories.length)];
-    const category = CHARADES_CATEGORIES.find(c => c.id === randomCatId) || CATEGORIES.find(c => c.id === randomCatId);
-    if (!category) return;
+    const randomCatId = selectedCats[Math.floor(Math.random() * selectedCats.length)];
+    const category = CHARADES_CATEGORIES.find(c => c.id === randomCatId) || CATEGORIES.find(c => c.id === randomCatId) || CHARADES_CATEGORIES[0];
     
     let availablePairs = category.pairs.filter(p => p.difficulty === effectiveDifficulty);
     if (availablePairs.length === 0) availablePairs = category.pairs;
@@ -233,11 +261,11 @@ export const useGameState = () => {
     const pair = availablePairs[Math.floor(Math.random() * availablePairs.length)];
     setCurrentCharadesWord(pair.citizen);
 
-    if (charadesSettings.actorId === 'RANDOM') {
+    if (currentSettings.actorId === 'RANDOM') {
       const randomActor = players[Math.floor(Math.random() * players.length)];
       setCurrentActor(randomActor);
     } else {
-      const selectedActor = players.find(p => p.id === charadesSettings.actorId);
+      const selectedActor = players.find(p => p.id === currentSettings.actorId);
       setCurrentActor(selectedActor || players[0]);
     }
 
@@ -290,13 +318,15 @@ export const useGameState = () => {
     addPlayer,
     removePlayer,
     updatePlayerName,
-    togglePlayerType,
+    updatePlayerType,
     toggleCategory,
     toggleCharadesCategory,
     initiateGame,
     startQuickMode,
     initiateCharades,
     resetGame,
-    nextReveal
+    nextReveal,
+    isPlayerManagerExpanded,
+    setIsPlayerManagerExpanded
   };
 };

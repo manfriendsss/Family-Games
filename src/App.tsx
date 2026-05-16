@@ -40,14 +40,16 @@ export default function App() {
     addPlayer,
     removePlayer,
     updatePlayerName,
-    togglePlayerType,
+    updatePlayerType,
     toggleCategory,
     toggleCharadesCategory,
     initiateGame,
     startQuickMode,
     initiateCharades,
     resetGame,
-    nextReveal
+    nextReveal,
+    isPlayerManagerExpanded,
+    setIsPlayerManagerExpanded
   } = useGameState();
 
   return (
@@ -77,9 +79,11 @@ export default function App() {
                   onAddPlayer={addPlayer}
                   onRemovePlayer={removePlayer}
                   onUpdatePlayerName={updatePlayerName}
-                  onTogglePlayerType={togglePlayerType}
+                  onUpdatePlayerType={updatePlayerType}
                   onSetExpandedPlayerId={setExpandedPlayerId}
                   gameConditions={getGameConditions()}
+                  isExpanded={isPlayerManagerExpanded}
+                  onToggleExpand={() => setIsPlayerManagerExpanded(!isPlayerManagerExpanded)}
                 />
                 <Dashboard 
                   onGoToImposter={() => { setGameMode('IMPOSTER'); setStage('SETUP'); }}
