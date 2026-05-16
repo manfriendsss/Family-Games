@@ -42,6 +42,7 @@ export interface CharadesSettings {
   timeLimit: boolean;
   timeSeconds: number;
   actorId: string | 'RANDOM';
+  autoRotateActor: boolean;
   mode: 'ACTIONS_AND_HINTS' | 'ACTIONS_ONLY';
 }
 

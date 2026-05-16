@@ -161,7 +161,8 @@ export const CharadesSetup: React.FC<CharadesSetupProps> = ({
             <select
               value={settings.actorId}
               onChange={(e) => onUpdateSettings({ ...settings, actorId: e.target.value })}
-              className="w-full bg-gray-50 border-none rounded-xl p-4 pr-10 text-sm font-bold appearance-none outline-none focus:ring-2 ring-purple-200"
+              disabled={settings.autoRotateActor}
+              className={`w-full border-none rounded-xl p-4 pr-10 text-sm font-bold appearance-none outline-none focus:ring-2 ring-purple-200 ${settings.autoRotateActor ? 'bg-gray-100 text-gray-400' : 'bg-gray-50'}`}
             >
               <option value="RANDOM">🎲 Ngẫu nhiên</option>
               {players.map(p => (
@@ -169,6 +170,16 @@ export const CharadesSetup: React.FC<CharadesSetupProps> = ({
               ))}
             </select>
             <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          </div>
+
+          <div className="mt-3 flex items-center justify-between">
+            <span className="text-[11px] font-black text-gray-500 uppercase tracking-wider">Tự luân phiên người giữ máy</span>
+            <button
+              onClick={() => onUpdateSettings({ ...settings, autoRotateActor: !settings.autoRotateActor })}
+              className={`w-12 h-7 rounded-full p-1 transition-colors relative ${settings.autoRotateActor ? 'bg-purple-500' : 'bg-gray-200'}`}
+            >
+              <motion.div animate={{ x: settings.autoRotateActor ? 20 : 0 }} className="w-5 h-5 bg-white rounded-full shadow-sm" />
+            </button>
           </div>
         </div>
 

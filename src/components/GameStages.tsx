@@ -20,6 +20,12 @@ export const RevealStage: React.FC<RevealStageProps> = ({
 }) => {
   const isCharades = gameMode === 'CHARADES';
   const isLastRevealPlayer = activePlayerIndex >= players.length - 1;
+  const handlePressStart = () => {
+    setIsPressing(true);
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      navigator.vibrate(12);
+    }
+  };
 
   return (
     <motion.div
@@ -46,7 +52,7 @@ export const RevealStage: React.FC<RevealStageProps> = ({
 
       <div className="relative w-full max-w-[min(70vw,280px)] sm:max-w-[300px] aspect-[3/4.2] mx-auto">
         <motion.div
-          onPointerDown={() => setIsPressing(true)}
+          onPointerDown={handlePressStart}
           onPointerUp={() => setIsPressing(false)}
           onPointerLeave={() => setIsPressing(false)}
           className="w-full h-full relative cursor-none select-none touch-none"
@@ -111,7 +117,7 @@ export const RevealStage: React.FC<RevealStageProps> = ({
       <div className="pt-2 sm:pt-4 flex justify-center">
         <button
           onClick={onNext}
-          className="w-full max-w-[300px] h-14 sm:h-16 bg-gray-900 text-white rounded-[20px] sm:rounded-[24px] font-black text-base sm:text-lg shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-3 border-4 border-white"
+          className="w-full max-w-[300px] h-14 sm:h-16 bg-gray-900 text-white rounded-[20px] sm:rounded-[24px] font-black text-base sm:text-lg shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-3 border-4 border-white [touch-action:manipulation]"
         >
           {isCharades ? 'BẮT ĐẦU LƯỢT CHƠI' : (isLastRevealPlayer ? 'XONG, BẮT ĐẦU' : 'XONG, NGƯỜI TIẾP THEO')} <ChevronRight size={22} strokeWidth={3} />
         </button>
@@ -239,7 +245,7 @@ export const CharadesResultStage: React.FC<CharadesResultStageProps> = ({
       </div>
 
       <button onClick={onNewRound} className="w-full h-16 bg-black text-white rounded-[24px] font-black text-lg shadow-lg active:scale-95 transition-transform">
-        CHƠI VÒNG MỚI
+        CHƠI VÁN MỚI
       </button>
     </motion.div>
   );

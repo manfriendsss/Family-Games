@@ -27,11 +27,23 @@ export const useGameState = () => {
   });
   const [charadesSettings, setCharadesSettings] = useState<CharadesSettings>(() => {
     const saved = localStorage.getItem('family-games-charades-settings');
-    return saved ? JSON.parse(saved) : {
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        selectedCategories: parsed.selectedCategories || ['actions'],
+        timeLimit: typeof parsed.timeLimit === 'boolean' ? parsed.timeLimit : true,
+        timeSeconds: typeof parsed.timeSeconds === 'number' ? parsed.timeSeconds : 60,
+        actorId: parsed.actorId || 'RANDOM',
+        autoRotateActor: typeof parsed.autoRotateActor === 'boolean' ? parsed.autoRotateActor : false,
+        mode: parsed.mode || 'ACTIONS_AND_HINTS',
+      };
+    }
+    return {
       selectedCategories: ['actions'],
       timeLimit: true,
       timeSeconds: 60,
       actorId: 'RANDOM',
+      autoRotateActor: false,
       mode: 'ACTIONS_AND_HINTS',
     };
   });
@@ -261,7 +273,11 @@ export const useGameState = () => {
     const pair = availablePairs[Math.floor(Math.random() * availablePairs.length)];
     setCurrentCharadesWord(pair.citizen);
 
-    if (currentSettings.actorId === 'RANDOM') {
+    if (currentSettings.autoRotateActor && players.length > 0) {
+      const currentIdx = currentActor ? players.findIndex(p => p.id === currentActor.id) : -1;
+      const nextIdx = currentIdx === -1 ? Math.floor(Math.random() * players.length) : (currentIdx + 1) % players.length;
+      setCurrentActor(players[nextIdx]);
+    } else if (currentSettings.actorId === 'RANDOM') {
       const randomActor = players[Math.floor(Math.random() * players.length)];
       setCurrentActor(randomActor);
     } else {

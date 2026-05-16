@@ -52,6 +52,11 @@ export default function App() {
     setIsPlayerManagerExpanded
   } = useGameState();
   const isRevealStage = stage === 'REVEAL';
+  const handleEndRound = (onConfirm: () => void) => {
+    if (window.confirm('Bạn chắc muốn kết thúc vòng chơi?')) {
+      onConfirm();
+    }
+  };
 
   useEffect(() => {
     if (!isRevealStage) return;
@@ -178,7 +183,7 @@ export default function App() {
                 currentWordPair={currentWordPair}
                 players={players}
                 settings={settings}
-                onNewGame={resetGame}
+                onNewGame={initiateGame}
               />
             )}
 
@@ -186,14 +191,14 @@ export default function App() {
               <CharadesResultStage
                 currentCharadesWord={currentCharadesWord}
                 currentActor={currentActor}
-                onNewRound={resetGame}
+                onNewRound={initiateCharades}
               />
             )}
           </AnimatePresence>
         </main>
 
         {stage !== 'DASHBOARD' && (
-          <footer className="fixed bottom-6 left-4 right-4 z-40 max-w-lg mx-auto">
+          <footer className="fixed bottom-[calc(env(safe-area-inset-bottom)+12px)] left-4 right-4 z-40 max-w-lg mx-auto">
             {stage === 'SETUP' || stage === 'CHARADES_SETUP' ? (
               <button
                 onClick={() => (stage === 'SETUP' ? initiateGame() : initiateCharades())}
@@ -203,14 +208,14 @@ export default function App() {
               </button>
             ) : (gameMode === 'CHARADES' && stage === 'DISCUSSION') ? (
               <button
-                onClick={() => setStage('CHARADES_RESULT')}
+                onClick={() => handleEndRound(() => setStage('CHARADES_RESULT'))}
                 className="w-full bg-white/80 backdrop-blur-xl border border-gray-100 text-red-500 h-14 rounded-2xl font-black flex items-center justify-center gap-2 shadow-xl active:scale-95 transition-transform"
               >
                 <RotateCcw size={18} /> KẾT THÚC VÒNG CHƠI
               </button>
             ) : (gameMode === 'IMPOSTER' && (stage === 'DISCUSSION' || stage === 'VOTING' || stage === 'RESULT')) ? (
               <button
-                onClick={resetGame}
+                onClick={() => handleEndRound(resetGame)}
                 className="w-full bg-white/80 backdrop-blur-xl border border-gray-100 text-red-500 h-14 rounded-2xl font-black flex items-center justify-center gap-2 shadow-xl active:scale-95 transition-transform"
               >
                 <RotateCcw size={18} /> KẾT THÚC VÒNG CHƠI
