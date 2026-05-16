@@ -174,7 +174,7 @@ export default function App() {
           <footer className="fixed bottom-6 left-4 right-4 z-40 max-w-lg mx-auto">
             {stage === 'SETUP' || stage === 'CHARADES_SETUP' ? (
               <button
-                onClick={stage === 'SETUP' ? initiateGame : initiateCharades}
+                onClick={() => (stage === 'SETUP' ? initiateGame() : initiateCharades())}
                 className="w-full h-18 rounded-[24px] bg-[#B2FF3D] text-gray-900 font-black text-xl shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-3 border-4 border-white shadow-lime-200/50"
               >
                 <Play size={24} fill="currentColor" /> BẮT ĐẦU {stage === 'CHARADES_SETUP' ? 'TRÒ CHƠI' : 'GAME'}
