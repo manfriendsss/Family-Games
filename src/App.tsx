@@ -3,22 +3,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Play, RotateCcw } from 'lucide-react';
 
 import { GameHeader } from './components/GameHeader';
-import { PlayerManager } from './components/PlayerManager';
-import { Dashboard } from './components/Dashboard';
-import { ImposterSetup } from './components/ImposterSetup';
-import { CharadesSetup } from './components/CharadesSetup';
-import { CharadesCategoryPopup } from './components/CharadesCategoryPopup';
-import { RevealStage, DiscussionStage, VotingStage, ResultStage, CharadesResultStage, ShuffleStage } from './components/GameStages';
-import { CaroSetup, CaroPlay } from './components/CaroGame';
-import { DoanTuSetup, DoanTuPlay } from './components/DoanTuGame';
+import { StageSkeleton } from './components/Skeletons';
 import { Player } from './types';
 
 import { useGameState } from './hooks/useGameState';
+
+const PlayerManager = lazy(() => import('./components/PlayerManager').then((m) => ({ default: m.PlayerManager })));
+const Dashboard = lazy(() => import('./components/Dashboard').then((m) => ({ default: m.Dashboard })));
+const ImposterSetup = lazy(() => import('./components/ImposterSetup').then((m) => ({ default: m.ImposterSetup })));
+const CharadesSetup = lazy(() => import('./components/CharadesSetup').then((m) => ({ default: m.CharadesSetup })));
+const CharadesCategoryPopup = lazy(() => import('./components/CharadesCategoryPopup').then((m) => ({ default: m.CharadesCategoryPopup })));
+const RevealStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.RevealStage })));
+const DiscussionStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.DiscussionStage })));
+const VotingStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.VotingStage })));
+const ResultStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.ResultStage })));
+const CharadesResultStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.CharadesResultStage })));
+const ShuffleStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.ShuffleStage })));
+const CaroSetup = lazy(() => import('./components/CaroGame').then((m) => ({ default: m.CaroSetup })));
+const CaroPlay = lazy(() => import('./components/CaroGame').then((m) => ({ default: m.CaroPlay })));
+const DoanTuSetup = lazy(() => import('./components/DoanTuGame').then((m) => ({ default: m.DoanTuSetup })));
+const DoanTuPlay = lazy(() => import('./components/DoanTuGame').then((m) => ({ default: m.DoanTuPlay })));
 
 export default function App() {
   const [caroBoardSize, setCaroBoardSize] = useState<3 | 15>(15);
@@ -99,8 +108,8 @@ export default function App() {
   }, [gameMode, stage, setStage]);
 
   return (
-    <div className={`min-h-screen bg-[#F5F7F9] text-[#1D1D1F] font-sans flex justify-center ${isLockedViewportStage ? 'p-0 overflow-hidden h-[100svh]' : 'p-4 md:p-8 pb-24'}`}>
-      <div className={`w-full max-w-lg flex flex-col ${isLockedViewportStage ? 'gap-0 h-[100svh]' : 'gap-6'}`}>
+    <div className={`min-h-screen bg-[#F5F7F9] text-[#1D1D1F] font-sans flex justify-center ${isLockedViewportStage ? 'p-0 overflow-hidden h-[100svh]' : 'px-4 py-4 md:px-6 lg:px-8 pb-24'}`}>
+      <div className={`w-full max-w-3xl flex flex-col ${isLockedViewportStage ? 'gap-0 h-[100svh]' : 'gap-6'}`}>
         {!isRevealStage && (
           <GameHeader
             stage={stage}
@@ -110,7 +119,8 @@ export default function App() {
         )}
 
         <main className={isLockedViewportStage ? 'h-full overflow-hidden' : 'space-y-6 pb-32'}>
-          <AnimatePresence mode="wait">
+          <Suspense fallback={<StageSkeleton />}>
+            <AnimatePresence mode="wait">
             {stage === 'DASHBOARD' && (
               <motion.div
                 key="dashboard-wrapper"
@@ -266,11 +276,12 @@ export default function App() {
                 onNewRound={initiateCharades}
               />
             )}
-          </AnimatePresence>
+            </AnimatePresence>
+          </Suspense>
         </main>
 
         {stage !== 'DASHBOARD' && gameMode !== 'CARO' && gameMode !== 'DOAN_TU' && (
-          <footer className="fixed bottom-[calc(env(safe-area-inset-bottom)+12px)] left-4 right-4 z-40 max-w-lg mx-auto">
+          <footer className="fixed bottom-[calc(env(safe-area-inset-bottom)+12px)] left-4 right-4 z-40 max-w-3xl mx-auto">
             {stage === 'SETUP' || stage === 'CHARADES_SETUP' ? (
               <button
                 onClick={() => (stage === 'SETUP' ? initiateGame() : initiateCharades())}
