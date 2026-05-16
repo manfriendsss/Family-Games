@@ -140,7 +140,7 @@ export const CharadesSetup: React.FC<CharadesSetupProps> = ({
                   settings.timeSeconds === s ? 'border-blue-500 bg-blue-50 text-blue-600' : 'border-gray-50 text-gray-400'
                 }`}
               >
-                {s} GIÂY
+                {s} GIAY
               </button>
             ))}
           </div>
