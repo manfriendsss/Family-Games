@@ -91,11 +91,8 @@ export const CharadesSetup: React.FC<CharadesSetupProps> = ({
                   {cat.icon}
                 </div>
                 <div className="flex-1 overflow-hidden min-w-0">
-                  <span title={cat.name} className={`text-[14px] font-bold block leading-tight truncate line-clamp-1 ${isSelected ? 'text-gray-900' : 'text-gray-700'}`}>
-                    {nameParts[0]}
-                  </span>
-                  <span title={cat.name} className="text-[11px] text-gray-400 font-bold block truncate line-clamp-1 mt-0.5">
-                    {nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'thú vị'}
+                  <span title={cat.name} className={`text-[15px] font-bold block leading-normal truncate ${isSelected ? 'text-gray-900' : 'text-gray-700'}`}>
+                    {cat.name}
                   </span>
                 </div>
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all shrink-0 ml-2 ${

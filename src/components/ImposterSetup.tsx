@@ -115,11 +115,8 @@ export const ImposterSetup: React.FC<ImposterSetupProps> = ({
                   {cat.icon}
                 </div>
                 <div className="flex-1 overflow-hidden min-w-0">
-                  <span className={`text-[14px] font-bold block leading-tight truncate ${isSelected ? 'text-gray-900' : 'text-gray-700'}`}>
-                    {nameParts[0]}
-                  </span>
-                  <span className="text-[11px] text-gray-400 font-bold block truncate mt-0.5">
-                     {nameParts.length > 1 ? nameParts[1] : (cat.id === 'nature' ? 'không biên giới' : 'thú vị')}
+                  <span className={`text-[15px] font-bold block leading-normal truncate ${isSelected ? 'text-gray-900' : 'text-gray-700'}`}>
+                    {cat.name}
                   </span>
                 </div>
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all shrink-0 ml-2 ${

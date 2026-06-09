@@ -120,7 +120,7 @@ const BASE_CATEGORIES: Category[] = [
 const BASE_CHARADES_CATEGORIES: Category[] = [
   {
     id: 'actions',
-    name: 'Hành động',
+    name: 'Hoạt động',
     icon: '🏃',
     pairs: [
       { citizen: 'Đánh răng', imposter_hint: 'Rửa mặt', difficulty: 'VERY_EASY' },

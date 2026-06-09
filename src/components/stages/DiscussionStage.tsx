@@ -73,7 +73,8 @@ export const DiscussionStage: React.FC<DiscussionStageProps> = ({
           {(gameMode === 'CHARADES'
             ? [
                 `Người giữ máy (${currentActor?.name}) tuyệt đối không được nhìn màn hình.`,
-                charadesSettings.mode === 'ACTIONS_ONLY' ? 'Chỉ được dùng hành động, không được nói.' : 'Có thể dùng hành động và lời nói gợi ý (không nói từ khóa).',
+                'Khi bắt đầu, 1 người trong nhóm (không phải người giữ máy) đưa ra 1 gợi ý đầu tiên để người đoán bắt đầu dễ hơn.',
+                `Mọi người còn lại diễn tả bằng ${charadesSettings.mode === 'ACTIONS_ONLY' ? 'cử chỉ/hành động (tuyệt đối không nói)' : 'hành động và lời nói gợi ý (không được nói từ khóa)'}.`,
                 'Bấm Kết thúc vòng chơi khi người giữ máy đã đoán xong hoặc hết thời gian.'
               ]
             : [
