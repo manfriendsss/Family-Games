@@ -20,16 +20,16 @@ export const DiscussionStage: React.FC<DiscussionStageProps> = ({
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }} className="space-y-4">
       <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 text-center">
         <h2 className="text-2xl font-black mb-1 text-lime-600">{gameMode === 'CHARADES' ? 'Đang chơi Charades' : 'Thảo luận'}</h2>
-        <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">{gameMode === 'CHARADES' ? 'Mọi người diễn tả cho người giữ máy đoán' : 'Điểm danh theo thứ tự'}</p>
+        <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">{gameMode === 'CHARADES' ? 'Người giữ máy hỏi, mọi người trả lời Đúng/Sai' : 'Điểm danh theo thứ tự'}</p>
       </div>
 
       {gameMode === 'CHARADES' && (
         <div className="bg-blue-600 rounded-[32px] p-8 text-white text-center shadow-2xl space-y-4">
           <div className="text-xs font-black uppercase tracking-widest opacity-70">Từ khóa đang úp</div>
-          <div className="text-2xl font-black">MỌI NGƯỜI DIỄN TẢ ĐỂ {currentActor?.name?.toUpperCase() || 'NGƯỜI GIỮ MÁY'} ĐOÁN</div>
+          <div className="text-2xl font-black">QUÂN {currentActor?.name?.toUpperCase() || 'NGƯỜI GIỮ MÁY'} HỎI • MỌI NGƯỜI ĐÁP</div>
           <div className="pt-4 border-t border-white/20 flex items-center justify-center gap-3">
             <div className="text-left">
-              <p className="text-[10px] font-black uppercase opacity-60">Người giữ máy</p>
+              <p className="text-[10px] font-black uppercase opacity-60">Người giữ máy (được hỏi)</p>
               <p className="text-lg font-black">{currentActor?.name}</p>
             </div>
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -73,8 +73,9 @@ export const DiscussionStage: React.FC<DiscussionStageProps> = ({
           {(gameMode === 'CHARADES'
             ? [
                 `Người giữ máy (${currentActor?.name}) tuyệt đối không được nhìn màn hình.`,
-                'Khi bắt đầu, 1 người trong nhóm (không phải người giữ máy) đưa ra 1 gợi ý đầu tiên để người đoán bắt đầu dễ hơn.',
-                `Mọi người còn lại diễn tả bằng ${charadesSettings.mode === 'ACTIONS_ONLY' ? 'cử chỉ/hành động (tuyệt đối không nói)' : 'hành động và lời nói gợi ý (không được nói từ khóa)'}.`,
+                'Khi bắt đầu, 1 người trong nhóm (không phải người giữ máy) đưa ra 1 gợi ý khái quát (ví dụ: Là con vật, đồ vật,...) để người đoán có manh mối bắt đầu.',
+                'Người giữ máy phải liên tục đặt các câu hỏi loại trừ (ví dụ: "Tôi biết bay không?", "Tôi có màu xanh không?",...).',
+                'Mọi người còn lại chỉ được trả lời "ĐÚNG", "SAI" hoặc "GẦN ĐÚNG" (không được diễn tả thêm hay nói từ khóa).',
                 'Bấm Kết thúc vòng chơi khi người giữ máy đã đoán xong hoặc hết thời gian.'
               ]
             : [

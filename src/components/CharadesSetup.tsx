@@ -42,8 +42,7 @@ export const CharadesSetup: React.FC<CharadesSetupProps> = ({
             <h2 className="text-white font-black text-sm uppercase tracking-wider">Luật chơi cơ bản</h2>
           </div>
           <p className="text-gray-300 text-xs leading-relaxed font-bold">
-            Ứng dụng sẽ chỉ định <span className="text-blue-300">người giữ điện thoại</span>. Người này đặt máy lên trán và không nhìn màn hình.
-            Mọi người còn lại diễn tả để người giữ máy đoán từ khóa.
+            Người giữ máy đặt điện thoại lên trán và không nhìn màn hình. Người này sẽ <span className="text-blue-300">đặt các câu hỏi loại trừ</span> (ví dụ: "Tôi là động vật phải không?") để mọi người trong nhóm trả lời "Đúng" hoặc "Sai", từ đó tìm ra từ khóa.
           </p>
         </div>
       </section>
