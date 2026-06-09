@@ -1,8 +1,8 @@
-﻿import React from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
 import { Check, Plus, Clock, ChevronDown, User, LayoutGrid, Users, Info, Tag } from 'lucide-react';
 import { CharadesSettings, Player } from '../types';
-import { CHARADES_CATEGORIES } from '../constants';
+import { CHARADES_CATEGORIES, CATEGORIES } from '../constants';
 
 interface CharadesSetupProps {
   settings: CharadesSettings;
@@ -19,6 +19,11 @@ export const CharadesSetup: React.FC<CharadesSetupProps> = ({
   onUpdateSettings,
   onShowCategoryPopup,
 }) => {
+  const displayedCategories = [
+    ...CHARADES_CATEGORIES,
+    ...CATEGORIES.filter(cat => settings.selectedCategories.includes(cat.id) && !CHARADES_CATEGORIES.some(cc => cc.id === cat.id))
+  ];
+
   return (
     <motion.div
       key="charades-setup"
@@ -69,7 +74,7 @@ export const CharadesSetup: React.FC<CharadesSetupProps> = ({
         </div>
 
         <div className="grid grid-cols-1 gap-2">
-          {CHARADES_CATEGORIES.map(cat => {
+          {displayedCategories.map(cat => {
             const isSelected = settings.selectedCategories.includes(cat.id);
             const nameParts = cat.name.split(' ');
             return (

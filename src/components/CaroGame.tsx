@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RotateCcw } from 'lucide-react';
 
@@ -121,7 +121,7 @@ export const CaroPlay: React.FC<CaroPlayProps> = ({ boardSize, onSwitchBoard }) 
     setWinner(null);
   };
 
-  const cellFont = boardSize === 3 ? 'text-5xl' : 'text-sm sm:text-base';
+  const cellFont = boardSize === 3 ? 'text-6xl font-black' : 'text-base sm:text-xl font-black';
   const boardHeight = boardSize === 3 ? 'min-h-[260px]' : 'min-h-[78svh]';
   const boardWrap = boardSize === 3 ? 'max-w-[260px] mx-auto' : '';
   const nextBoardSize: 3 | 15 = boardSize === 15 ? 3 : 15;
@@ -131,7 +131,7 @@ export const CaroPlay: React.FC<CaroPlayProps> = ({ boardSize, onSwitchBoard }) 
       <section className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
         <div>
           <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Lượt hiện tại</p>
-          <p className={`font-extrabold text-2xl ${current === 'X' ? 'text-blue-600' : 'text-red-500'}`}>{current}</p>
+          <p className={`font-black text-2xl ${current === 'X' ? 'text-blue-600' : 'text-red-500'}`}>{current}</p>
         </div>
         <button
           onClick={resetBoard}
@@ -153,7 +153,7 @@ export const CaroPlay: React.FC<CaroPlayProps> = ({ boardSize, onSwitchBoard }) 
                 onClick={() => handleMove(r, c)}
                 className="aspect-square rounded-md bg-gray-50 border border-gray-200 flex items-center justify-center active:scale-95 transition-transform [touch-action:manipulation]"
               >
-                <span className={`font-extrabold ${cellFont} ${cell === 'X' ? 'text-blue-600' : cell === 'O' ? 'text-red-500' : 'text-transparent'}`}>
+                <span className={`font-black ${cellFont} ${cell === 'X' ? 'text-blue-600' : cell === 'O' ? 'text-red-500' : 'text-transparent'} select-none`} style={{ WebkitTextStroke: '1px currentColor' }}>
                   {cell || '·'}
                 </span>
               </button>
@@ -168,39 +168,65 @@ export const CaroPlay: React.FC<CaroPlayProps> = ({ boardSize, onSwitchBoard }) 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/35 backdrop-blur-sm flex items-center justify-center px-4"
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4"
           >
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              {Array.from({ length: 90 }).map((_, i) => (
-                <span
-                  key={i}
-                  className="confetti-piece"
-                  style={{
-                    left: `${(i * 13) % 100}%`,
-                    animationDelay: `${(i % 12) * 0.08}s`,
-                  }}
-                />
-              ))}
-            </div>
+            {winner !== 'DRAW' && (
+              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {Array.from({ length: 90 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="confetti-piece"
+                    style={{
+                      left: `${(i * 13) % 100}%`,
+                      animationDelay: `${(i % 12) * 0.08}s`,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
             <motion.div
               initial={{ scale: 0.9, y: 16 }}
               animate={{ scale: 1, y: 0 }}
-              className="relative z-10 w-full max-w-sm bg-white rounded-3xl p-6 text-center shadow-2xl border border-gray-100"
+              className="relative z-10 w-full max-w-sm bg-white rounded-[32px] p-6 text-center shadow-2xl border border-gray-100 flex flex-col items-center space-y-4"
             >
-              <h3 className="text-2xl font-black text-gray-900 mb-2">Chúc mừng!</h3>
-              <p className="text-sm font-bold text-gray-500 mb-4">
-                {winner === 'DRAW' ? 'Ván cờ hòa, chơi lại nhé!' : <>Người chơi <span className={`${winner === 'X' ? 'text-blue-600' : 'text-red-500'} font-extrabold text-lg`}>{winner}</span> đã chiến thắng!</>}
-              </p>
-              <div className="space-y-2">
+              {winner === 'DRAW' ? (
+                <>
+                  <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center text-4xl shadow-inner border border-amber-100">
+                    🤝
+                  </div>
+                  <h3 className="text-2xl font-black text-amber-600 uppercase tracking-tight leading-none">HÒA CỜ!</h3>
+                  <p className="text-sm font-bold text-gray-500 leading-relaxed px-4">
+                    Kẻ tám lạng người nửa cân! Hai bên đã đấu trí ngang tài ngang sức. Chơi ván mới nhé!
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className={`w-20 h-20 rounded-full flex items-center justify-center text-white text-4xl font-black shadow-lg ${
+                    winner === 'X' ? 'bg-blue-600 shadow-blue-200' : 'bg-red-500 shadow-red-200'
+                  }`}>
+                    {winner}
+                  </div>
+                  <h3 className={`text-2xl font-black uppercase tracking-tight leading-none ${
+                    winner === 'X' ? 'text-blue-600' : 'text-red-500'
+                  }`}>
+                    QUÂN {winner} THẮNG!
+                  </h3>
+                  <p className="text-sm font-bold text-gray-500 leading-relaxed px-4">
+                    Chúc mừng quân <span className={`font-black text-lg ${winner === 'X' ? 'text-blue-600' : 'text-red-500'}`}>{winner}</span> đã xuất sắc giành chiến thắng!
+                  </p>
+                </>
+              )}
+
+              <div className="space-y-2 w-full pt-2">
                 <button
                   onClick={resetBoard}
-                  className="w-full h-12 rounded-xl bg-[#B2FF3D] text-gray-900 font-black active:scale-95 transition-transform"
+                  className="w-full h-13 rounded-2xl bg-[#B2FF3D] text-gray-900 font-black active:scale-95 transition-transform text-sm uppercase shadow-lg shadow-lime-100 border-2 border-white"
                 >
                   CHƠI VÁN MỚI
                 </button>
                 <button
                   onClick={() => onSwitchBoard(nextBoardSize)}
-                  className="w-full h-11 rounded-xl bg-gray-900 text-white font-black active:scale-95 transition-transform"
+                  className="w-full h-12 rounded-2xl bg-gray-900 text-white font-black active:scale-95 transition-transform text-sm uppercase"
                 >
                   {nextBoardSize === 3 ? 'CHỌN BÀN 3x3' : 'CHỌN BÀN 15x15'}
                 </button>

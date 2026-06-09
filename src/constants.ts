@@ -4,7 +4,7 @@ const BASE_CATEGORIES: Category[] = [
   {
     id: 'objects',
     name: 'Đồ vật hằng ngày',
-    icon: 'home',
+    icon: '🏠',
     pairs: [
       { citizen: 'Gấu bông', imposter_hint: 'Búp bê', difficulty: 'VERY_EASY' },
       { citizen: 'Cái cốc', imposter_hint: 'Cái bát', difficulty: 'VERY_EASY' },
@@ -23,7 +23,7 @@ const BASE_CATEGORIES: Category[] = [
   {
     id: 'foods',
     name: 'Ẩm thực',
-    icon: 'pizza',
+    icon: '🍕',
     pairs: [
       { citizen: 'Phở', imposter_hint: 'Bún bò', difficulty: 'HARD' },
       { citizen: 'Cơm tấm', imposter_hint: 'Cơm gà', difficulty: 'EASY' },
@@ -42,12 +42,12 @@ const BASE_CATEGORIES: Category[] = [
   {
     id: 'animals',
     name: 'Động vật',
-    icon: 'paw',
+    icon: '🐾',
     pairs: [
       { citizen: 'Con mèo', imposter_hint: 'Con hổ', difficulty: 'VERY_EASY' },
       { citizen: 'Con chó', imposter_hint: 'Con sói', difficulty: 'EASY' },
       { citizen: 'Con voi', imposter_hint: 'Con hà mã', difficulty: 'EASY' },
-      { citizen: 'Con khỉ', imposter_hint: 'Con vượn', difficulty: 'EASY' },
+      { citizen: 'Con khỉ', imposter_hint: 'Con vượn', difficulty: 'HARD' },
       { citizen: 'Con gà', imposter_hint: 'Con vịt', difficulty: 'VERY_EASY' },
       { citizen: 'Con thỏ', imposter_hint: 'Con chuột', difficulty: 'VERY_EASY' },
       { citizen: 'Cá mập', imposter_hint: 'Cá voi', difficulty: 'EASY' },
@@ -61,7 +61,7 @@ const BASE_CATEGORIES: Category[] = [
   {
     id: 'entertainment',
     name: 'Giải trí và phim ảnh',
-    icon: 'film',
+    icon: '🎬',
     pairs: [
       { citizen: 'Doraemon', imposter_hint: 'Nobita', difficulty: 'VERY_EASY' },
       { citizen: 'Người nhện', imposter_hint: 'Người sắt', difficulty: 'EASY' },
@@ -72,34 +72,34 @@ const BASE_CATEGORIES: Category[] = [
       { citizen: 'Harry Potter', imposter_hint: 'Chúa tể nhẫn', difficulty: 'HARD' },
       { citizen: 'Marvel', imposter_hint: 'DC Comics', difficulty: 'HARD' },
       { citizen: 'Superman', imposter_hint: 'Batman', difficulty: 'EASY' },
-      { citizen: 'Netflix', imposter_hint: 'Disney Plus', difficulty: 'EASY' },
-      { citizen: 'K-pop', imposter_hint: 'V-pop', difficulty: 'EASY' },
+      { citizen: 'Netflix', imposter_hint: 'Disney Plus', difficulty: 'HARD' },
+      { citizen: 'K-pop', imposter_hint: 'V-pop', difficulty: 'HARD' },
       { citizen: 'Guitar', imposter_hint: 'Piano', difficulty: 'EASY' },
     ],
   },
   {
     id: 'knowledge',
     name: 'Kiến thức và đời sống',
-    icon: 'book',
+    icon: '📚',
     pairs: [
       { citizen: 'Bảng đen', imposter_hint: 'Viên phấn', difficulty: 'VERY_EASY' },
       { citizen: 'Bút chì', imposter_hint: 'Bút bi', difficulty: 'VERY_EASY' },
       { citizen: 'Bác sĩ', imposter_hint: 'Y tá', difficulty: 'EASY' },
       { citizen: 'Công an', imposter_hint: 'Bộ đội', difficulty: 'EASY' },
       { citizen: 'Giáo viên', imposter_hint: 'Giảng viên', difficulty: 'HARD' },
-      { citizen: 'Sách giáo khoa', imposter_hint: 'Từ điển', difficulty: 'EASY' },
+      { citizen: 'Sách giáo khoa', imposter_hint: 'Từ điển', difficulty: 'HARD' },
       { citizen: 'Bản đồ', imposter_hint: 'Quả địa cầu', difficulty: 'HARD' },
       { citizen: 'Tiền mặt', imposter_hint: 'Thẻ ngân hàng', difficulty: 'EASY' },
       { citizen: 'Hộ chiếu', imposter_hint: 'Visa', difficulty: 'HARD' },
-      { citizen: 'Email', imposter_hint: 'Thư tay', difficulty: 'EASY' },
-      { citizen: 'Wifi', imposter_hint: '4G', difficulty: 'EASY' },
+      { citizen: 'Email', imposter_hint: 'Thư tay', difficulty: 'HARD' },
+      { citizen: 'Wifi', imposter_hint: '4G', difficulty: 'HARD' },
       { citizen: 'Robot', imposter_hint: 'Trí tuệ nhân tạo', difficulty: 'HARD' },
     ],
   },
   {
     id: 'sports',
     name: 'Thể thao',
-    icon: 'ball',
+    icon: '⚽',
     pairs: [
       { citizen: 'Đá bóng', imposter_hint: 'Đá cầu', difficulty: 'VERY_EASY' },
       { citizen: 'Bơi lội', imposter_hint: 'Lặn biển', difficulty: 'EASY' },
@@ -121,7 +121,7 @@ const BASE_CHARADES_CATEGORIES: Category[] = [
   {
     id: 'actions',
     name: 'Hành động',
-    icon: 'run',
+    icon: '🏃',
     pairs: [
       { citizen: 'Đánh răng', imposter_hint: 'Rửa mặt', difficulty: 'VERY_EASY' },
       { citizen: 'Quét nhà', imposter_hint: 'Lau nhà', difficulty: 'VERY_EASY' },
@@ -140,7 +140,7 @@ const BASE_CHARADES_CATEGORIES: Category[] = [
   {
     id: 'jobs',
     name: 'Nghề nghiệp',
-    icon: 'briefcase',
+    icon: '💼',
     pairs: [
       { citizen: 'Bác sĩ', imposter_hint: 'Y tá', difficulty: 'VERY_EASY' },
       { citizen: 'Giáo viên', imposter_hint: 'Học sinh', difficulty: 'VERY_EASY' },
@@ -159,7 +159,7 @@ const BASE_CHARADES_CATEGORIES: Category[] = [
   {
     id: 'animals',
     name: 'Động vật',
-    icon: 'dog',
+    icon: '🐶',
     pairs: [
       { citizen: 'Con khỉ', imposter_hint: 'Con vượn', difficulty: 'VERY_EASY' },
       { citizen: 'Con voi', imposter_hint: 'Con hổ', difficulty: 'VERY_EASY' },
@@ -178,7 +178,7 @@ const BASE_CHARADES_CATEGORIES: Category[] = [
   {
     id: 'objects',
     name: 'Đồ vật',
-    icon: 'box',
+    icon: '📦',
     pairs: [
       { citizen: 'Cái cốc', imposter_hint: 'Cái bát', difficulty: 'VERY_EASY' },
       { citizen: 'Điện thoại', imposter_hint: 'Máy tính', difficulty: 'VERY_EASY' },
@@ -197,7 +197,7 @@ const BASE_CHARADES_CATEGORIES: Category[] = [
   {
     id: 'sports',
     name: 'Thể thao',
-    icon: 'sport',
+    icon: '⚽',
     pairs: [
       { citizen: 'Bóng đá', imposter_hint: 'Bóng chuyền', difficulty: 'VERY_EASY' },
       { citizen: 'Đua bơi', imposter_hint: 'Lặn', difficulty: 'EASY' },

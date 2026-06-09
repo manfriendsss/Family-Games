@@ -66,6 +66,16 @@ export const useGameState = () => {
     return saved !== null ? JSON.parse(saved) : true;
   });
 
+  const [usedImposterPairs, setUsedImposterPairs] = useState<string[]>(() => {
+    const saved = localStorage.getItem('family-games-used-imposter');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [usedCharadesWords, setUsedCharadesWords] = useState<string[]>(() => {
+    const saved = localStorage.getItem('family-games-used-charades');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   // Persist to localStorage
   useEffect(() => {
     localStorage.setItem('family-games-players', JSON.stringify(players.map(p => ({
@@ -86,6 +96,14 @@ export const useGameState = () => {
   useEffect(() => {
     localStorage.setItem('family-games-pm-expanded', JSON.stringify(isPlayerManagerExpanded));
   }, [isPlayerManagerExpanded]);
+
+  useEffect(() => {
+    localStorage.setItem('family-games-used-imposter', JSON.stringify(usedImposterPairs));
+  }, [usedImposterPairs]);
+
+  useEffect(() => {
+    localStorage.setItem('family-games-used-charades', JSON.stringify(usedCharadesWords));
+  }, [usedCharadesWords]);
 
   useEffect(() => {
     return () => {
@@ -175,13 +193,35 @@ export const useGameState = () => {
     const randomCatId = selectedCats[Math.floor(Math.random() * selectedCats.length)];
     const category = CATEGORIES.find(c => c.id === randomCatId) || CATEGORIES[0];
     
-    let availablePairs = category.pairs.filter(p => p.difficulty === effectiveDifficulty);
+    // Difficulty filtering: If there are children or difficulty is EASY/VERY_EASY, allow both VERY_EASY and EASY pairs.
+    const hasChildren = players.some(p => p.isAdult === false);
+    const allowedDifficulties: Difficulty[] = [];
+    if (hasChildren) {
+      allowedDifficulties.push('VERY_EASY', 'EASY');
+    } else if (effectiveDifficulty === 'VERY_EASY') {
+      allowedDifficulties.push('VERY_EASY');
+    } else if (effectiveDifficulty === 'EASY') {
+      allowedDifficulties.push('VERY_EASY', 'EASY');
+    } else {
+      allowedDifficulties.push('HARD');
+    }
+
+    let availablePairs = category.pairs.filter(p => p.difficulty && allowedDifficulties.includes(p.difficulty));
     if (availablePairs.length === 0) availablePairs = category.pairs;
     
+    // Repetition prevention
+    let unusedPairs = availablePairs.filter(p => !usedImposterPairs.includes(p.citizen));
+    if (unusedPairs.length === 0) {
+      const citizenWords = availablePairs.map(p => p.citizen);
+      setUsedImposterPairs(prev => prev.filter(w => !citizenWords.includes(w)));
+      unusedPairs = availablePairs;
+    }
+
     try {
-      const wordPair = availablePairs[Math.floor(Math.random() * availablePairs.length)];
+      const wordPair = unusedPairs[Math.floor(Math.random() * unusedPairs.length)];
       if (!wordPair) throw new Error("Không tìm thấy từ khóa!");
       
+      setUsedImposterPairs(prev => [...prev, wordPair.citizen]);
       setCurrentWordPair(wordPair);
 
       let newPlayers = [...players].map(p => ({ ...p, isRevealed: false, role: 'CITIZEN' as Role }));
@@ -283,11 +323,34 @@ export const useGameState = () => {
     const randomCatId = selectedCats[Math.floor(Math.random() * selectedCats.length)];
     const category = CHARADES_CATEGORIES.find(c => c.id === randomCatId) || CATEGORIES.find(c => c.id === randomCatId) || CHARADES_CATEGORIES[0];
     
-    let availablePairs = category.pairs.filter(p => p.difficulty === effectiveDifficulty);
+    // Difficulty filtering: If there are children or difficulty is EASY/VERY_EASY, allow both VERY_EASY and EASY pairs.
+    const hasChildren = players.some(p => p.isAdult === false);
+    const allowedDifficulties: Difficulty[] = [];
+    if (hasChildren) {
+      allowedDifficulties.push('VERY_EASY', 'EASY');
+    } else if (effectiveDifficulty === 'VERY_EASY') {
+      allowedDifficulties.push('VERY_EASY');
+    } else if (effectiveDifficulty === 'EASY') {
+      allowedDifficulties.push('VERY_EASY', 'EASY');
+    } else {
+      allowedDifficulties.push('HARD');
+    }
+
+    let availablePairs = category.pairs.filter(p => p.difficulty && allowedDifficulties.includes(p.difficulty));
     if (availablePairs.length === 0) availablePairs = category.pairs;
     
-    const pair = availablePairs[Math.floor(Math.random() * availablePairs.length)];
+    // Repetition prevention
+    let unusedPairs = availablePairs.filter(p => !usedCharadesWords.includes(p.citizen));
+    if (unusedPairs.length === 0) {
+      const citizenWords = availablePairs.map(p => p.citizen);
+      setUsedCharadesWords(prev => prev.filter(w => !citizenWords.includes(w)));
+      unusedPairs = availablePairs;
+    }
+
+    const pair = unusedPairs[Math.floor(Math.random() * unusedPairs.length)];
     setCurrentCharadesWord(pair.citizen);
+    
+    setUsedCharadesWords(prev => [...prev, pair.citizen]);
 
     if (currentSettings.autoRotateActor && players.length > 0) {
       const currentIdx = currentActor ? players.findIndex(p => p.id === currentActor.id) : -1;

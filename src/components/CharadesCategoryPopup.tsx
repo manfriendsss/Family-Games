@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Plus, Check } from 'lucide-react';
 import { Category } from '../types';
-import { CHARADES_CATEGORIES } from '../constants';
+import { CHARADES_CATEGORIES, CATEGORIES } from '../constants';
 
 interface CharadesCategoryPopupProps {
   isOpen: boolean;
@@ -17,6 +17,11 @@ export const CharadesCategoryPopup: React.FC<CharadesCategoryPopupProps> = ({
   onToggleCategory,
   onClose,
 }) => {
+  const allAvailableCategories = [
+    ...CHARADES_CATEGORIES,
+    ...CATEGORIES.filter(cat => !CHARADES_CATEGORIES.some(cc => cc.id === cat.id))
+  ];
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -36,11 +41,11 @@ export const CharadesCategoryPopup: React.FC<CharadesCategoryPopupProps> = ({
              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
                 <h2 className="text-xl font-black text-gray-900 uppercase">Chọn chủ đề trò chơi</h2>
                 <button onClick={onClose} className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Plus size={20} className="rotate-45" />
+                   <Plus size={20} className="rotate-45" />
                 </button>
              </div>
              <div className="p-4 max-h-[60vh] overflow-y-auto grid grid-cols-1 gap-2">
-                {CHARADES_CATEGORIES.map(cat => {
+                {allAvailableCategories.map(cat => {
                   const isSelected = selectedCategories.includes(cat.id);
                   return (
                     <button

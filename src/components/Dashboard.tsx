@@ -58,6 +58,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onGoToImposter, onGoToChar
         </div>
         <ChevronRight className="text-gray-300 group-hover:text-pink-500 transition-colors" />
       </motion.button>
+
     </div>
   );
 };

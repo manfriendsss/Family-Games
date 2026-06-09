@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -18,12 +18,12 @@ const Dashboard = lazy(() => import('./components/Dashboard').then((m) => ({ def
 const ImposterSetup = lazy(() => import('./components/ImposterSetup').then((m) => ({ default: m.ImposterSetup })));
 const CharadesSetup = lazy(() => import('./components/CharadesSetup').then((m) => ({ default: m.CharadesSetup })));
 const CharadesCategoryPopup = lazy(() => import('./components/CharadesCategoryPopup').then((m) => ({ default: m.CharadesCategoryPopup })));
-const RevealStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.RevealStage })));
-const DiscussionStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.DiscussionStage })));
-const VotingStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.VotingStage })));
-const ResultStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.ResultStage })));
-const CharadesResultStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.CharadesResultStage })));
-const ShuffleStage = lazy(() => import('./components/GameStages').then((m) => ({ default: m.ShuffleStage })));
+const RevealStage = lazy(() => import('./components/stages/RevealStage').then((m) => ({ default: m.RevealStage })));
+const DiscussionStage = lazy(() => import('./components/stages/DiscussionStage').then((m) => ({ default: m.DiscussionStage })));
+const VotingStage = lazy(() => import('./components/stages/VotingStage').then((m) => ({ default: m.VotingStage })));
+const ResultStage = lazy(() => import('./components/stages/ResultStage').then((m) => ({ default: m.ResultStage })));
+const CharadesResultStage = lazy(() => import('./components/stages/CharadesResultStage').then((m) => ({ default: m.CharadesResultStage })));
+const ShuffleStage = lazy(() => import('./components/stages/ShuffleStage').then((m) => ({ default: m.ShuffleStage })));
 const CaroSetup = lazy(() => import('./components/CaroGame').then((m) => ({ default: m.CaroSetup })));
 const CaroPlay = lazy(() => import('./components/CaroGame').then((m) => ({ default: m.CaroPlay })));
 const DoanTuSetup = lazy(() => import('./components/DoanTuGame').then((m) => ({ default: m.DoanTuSetup })));
@@ -33,6 +33,11 @@ export default function App() {
   const [caroBoardSize, setCaroBoardSize] = useState<3 | 15>(15);
   const [doanTuDifficulty, setDoanTuDifficulty] = useState<'EASY' | 'HARD'>('EASY');
   const [doanTuTeams, setDoanTuTeams] = useState<Array<{ name: string; members: Player[] }>>([]);
+  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; message: string; onConfirm: (() => void) | null }>({
+    isOpen: false,
+    message: '',
+    onConfirm: null,
+  });
   const {
     gameMode, setGameMode,
     stage, setStage,
@@ -69,22 +74,43 @@ export default function App() {
   const isRevealStage = stage === 'REVEAL' || stage === 'SHUFFLE';
   const isCaroPlayStage = stage === 'CARO_PLAY';
   const isLockedViewportStage = isRevealStage || isCaroPlayStage;
+  
   const handleBack = () => {
     if (gameMode === 'CARO' && stage === 'CARO_PLAY') {
-      setStage('CARO_SETUP');
+      setConfirmModal({
+        isOpen: true,
+        message: 'Bạn có chắc chắn muốn thoát trận đấu Caro hiện tại không?',
+        onConfirm: () => {
+          setStage('CARO_SETUP');
+          setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        }
+      });
       return;
     }
     if (gameMode === 'DOAN_TU' && stage === 'DOAN_TU_PLAY') {
-      setStage('DOAN_TU_SETUP');
+      setConfirmModal({
+        isOpen: true,
+        message: 'Bạn có chắc chắn muốn thoát lượt chơi Đoán từ hiện tại không?',
+        onConfirm: () => {
+          setStage('DOAN_TU_SETUP');
+          setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        }
+      });
       return;
     }
     setGameMode('DASHBOARD');
     setStage('DASHBOARD');
   };
+
   const handleEndRound = (onConfirm: () => void) => {
-    if (window.confirm('Bạn chắc muốn kết thúc vòng chơi?')) {
-      onConfirm();
-    }
+    setConfirmModal({
+      isOpen: true,
+      message: 'Bạn có chắc chắn muốn kết thúc vòng chơi này không?',
+      onConfirm: () => {
+        onConfirm();
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+      }
+    });
   };
 
   useEffect(() => {
@@ -119,7 +145,7 @@ export default function App() {
         )}
 
         <main className={isLockedViewportStage ? 'h-full overflow-hidden' : 'space-y-6 pb-32'}>
-          <Suspense fallback={<StageSkeleton />}>
+          <Suspense fallback={<StageSkeleton stage={stage} gameMode={gameMode} />}>
             <AnimatePresence mode="wait">
             {stage === 'DASHBOARD' && (
               <motion.div
@@ -305,6 +331,47 @@ export default function App() {
               </button>
             ) : null}
           </footer>
+        )}
+        {confirmModal.isOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white w-full max-w-sm rounded-[32px] overflow-hidden shadow-2xl relative z-10 p-6 border border-gray-100 flex flex-col items-center text-center space-y-4"
+            >
+              <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 text-2xl">
+                ⚠️
+              </div>
+              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight">Xác nhận</h3>
+              <p className="text-sm text-gray-500 font-bold leading-relaxed px-2">
+                {confirmModal.message}
+              </p>
+              <div className="grid grid-cols-2 gap-3 w-full pt-2">
+                <button
+                  onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                  className="h-12 bg-gray-100 text-gray-700 rounded-2xl font-black active:scale-95 transition-all text-xs uppercase"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirmModal.onConfirm) confirmModal.onConfirm();
+                  }}
+                  className="h-12 bg-red-500 text-white rounded-2xl font-black active:scale-95 transition-all text-xs uppercase shadow-lg shadow-red-100"
+                >
+                  Đồng ý
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </div>
     </div>
